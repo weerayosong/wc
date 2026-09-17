@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 0: Setup</title>
+  
+  <!-- Fonts: Quicksand (Header), Inter (Eng/Numbers), Sarabun (Thai Text) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Inter:wght@400;500;700&family=Sarabun:wght@400;500;700;800&display=swap">
+  
+  <!-- FontAwesome for Icons (แทนที่ Emoji) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Inter', 'Sarabun', sans-serif; 
+        background: #51545F; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    /* 16:9 Slide Container (1280x720) */
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: #51545F;
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', 'Sarabun', sans-serif; font-weight: 700; color: #51545F; margin: 0; line-height: 1.2; }
+    p { line-height: 1.5; }
+    
+    /* BSD Brand Colors */
+    .text-slate { color: #51545F; }
+    .text-teal { color: #00C4BA; }
+    .text-yellow { color: #FFCD00; }
+    .text-red { color: #FA595D; }
+    .text-green { color: #75CF20; }
+    .text-orange { color: #FCAC17; }
+    
+    .bg-soft-teal { background: #EFF9F8; }
+    .bg-soft-yellow { background: #FEFAF1; }
+    .bg-soft-red { background: #FFF7F8; }
+    .bg-soft-green { background: #FAFFF8; }
+    .bg-soft-orange { background: #FAF6F0; }
+
+    /* Graphic Assets (ลายน้ำพื้นหลัง) */
+    .bg-symbol {
+      position: absolute;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 350px;
+      line-height: 1;
+      opacity: 0.05; 
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+    
+    /* Content Wrapper */
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 64px; 
+    }
+
+    /* Tag Styles for Lesson Stages */
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 16px;
+        align-self: flex-start;
+    }
+
+    /* Code Window UI */
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #FA595D; }
+    .dot-yellow { background: #FFCD00; }
+    .dot-green { background: #75CF20; }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 22px; 
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+    
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: #FA595D; font-weight: 600; }
+    .c-func { color: #00C4BA; }
+    .c-string { color: #FFCD00; }
+    .c-number { color: #75CF20; }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div class="slide-container" id="slide1" style="border-top: 16px solid #00C4BA;">
+    <div class="bg-symbol text-teal" style="top: -50px; left: -50px;">&lt;/&gt;</div>
+    <div class="bg-symbol text-yellow" style="bottom: -100px; right: -50px;">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:#EFF9F8; color:#00C4BA; padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 0: เตรียมความพร้อม<br><span class="text-teal">ระบบและเครื่องมือ</span>
+      </h1>
+      <p style="font-size:32px; color:#51545F; max-width:900px; font-weight:700;">
+        "การลงทุนที่ดีที่สุด คือการลงทุนในเครื่องมือที่ถูกต้อง"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        ติดตั้ง Python, VS Code และสร้างสภาพแวดล้อม (Environment) เพื่อเตรียมพร้อมสู่การเป็นนักพัฒนาทางการเงิน
+      </p>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide2">
+    <div class="bg-symbol text-red" style="top: -50px; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:48px; text-align:center;">เป้าหมายใน 2 ชั่วโมงนี้</h2>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#EFF9F8; border-radius:16px; padding:32px; text-align:center; display:flex; flex-direction:column; justify-content:center;">
+          <i class="fa-brands fa-python text-teal" style="font-size:72px; margin-bottom:24px;"></i>
+          <h3 style="font-size:28px; margin-bottom:12px;">1. Python</h3>
+          <p style="font-size:20px;">ติดตั้งเครื่องยนต์หลัก<br>สำหรับการคำนวณ</p>
+        </div>
+        
+        <div style="flex:1; background:#FEFAF1; border-radius:16px; padding:32px; text-align:center; display:flex; flex-direction:column; justify-content:center;">
+          <i class="fa-solid fa-code text-yellow" style="font-size:72px; margin-bottom:24px;"></i>
+          <h3 style="font-size:28px; margin-bottom:12px;">2. VS Code</h3>
+          <p style="font-size:20px;">เตรียมโต๊ะทำงาน<br>สำหรับเขียนโค้ด</p>
+        </div>
+        
+        <div style="flex:1; background:#FAF6F0; border-radius:16px; padding:32px; text-align:center; display:flex; flex-direction:column; justify-content:center;">
+          <i class="fa-solid fa-box text-orange" style="font-size:72px; margin-bottom:24px;"></i>
+          <h3 style="font-size:28px; margin-bottom:12px;">3. venv</h3>
+          <p style="font-size:20px;">สร้างกล่องจำลอง<br>เพื่อความปลอดภัย</p>
+        </div>
+        
+        <div style="flex:1; background:#FAFFF8; border-radius:16px; padding:32px; text-align:center; display:flex; flex-direction:column; justify-content:center;">
+          <i class="fa-solid fa-cubes text-green" style="font-size:72px; margin-bottom:24px;"></i>
+          <h3 style="font-size:28px; margin-bottom:12px;">4. Libraries</h3>
+          <p style="font-size:20px;">ติดตั้งเครื่องมือ<br>จัดการข้อมูลการเงิน</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide3">
+    <div class="bg-symbol text-slate" style="bottom: -50px; left: -50px;">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#EFF9F8; color:#00C4BA; border: 2px solid #00C4BA;">STEP 1</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ติดตั้งเครื่องยนต์หลัก <span class="text-teal">(Python)</span></h2>
+      <p style="font-size:28px; margin-bottom:24px;">
+        ดาวน์โหลดเวอร์ชันล่าสุดจาก <b>python.org</b> แล้วเปิดไฟล์ติดตั้ง
+      </p>
+      
+      <div style="background:#FFF7F8; border:4px solid #FA595D; border-radius:20px; padding:32px; display:flex; flex-direction:column; align-items:center; flex-grow:1; justify-content:center;">
+        <h3 style="font-size:36px; color:#FA595D; margin-bottom:24px;">
+            <i class="fa-solid fa-triangle-exclamation" style="margin-right:12px;"></i> กฎเหล็กของการติดตั้ง!
+        </h3>
+        
+        <div style="background:white; padding:24px 40px; border-radius:12px; border:2px solid #E5E7EB; width:80%; max-width:700px;">
+          <div style="display:flex; align-items:center; margin-bottom:16px;">
+            <i class="fa-solid fa-square-check text-teal" style="font-size:32px; margin-right:16px;"></i>
+            <span style="font-size:28px; font-weight:700; font-family:'Inter', sans-serif;">Add python.exe to PATH</span>
+          </div>
+          <p style="font-size:20px; color:#51545F; line-height:1.6; margin-left:48px;">
+            ต้อง <b>ติ๊กถูก</b> ที่ช่องนี้ก่อนกด Install เสมอ! <br>เพื่อให้คอมพิวเตอร์ของคุณจดจำคำสั่ง Python ได้
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide4">
+    <div class="bg-symbol text-yellow" style="top: -50px; right: -50px;">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FEFAF1; color:#FFCD00; border: 2px solid #FFCD00;">STEP 2</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ติดตั้งโต๊ะทำงาน <span class="text-yellow">(VS Code)</span></h2>
+      <p style="font-size:28px; margin-bottom:24px;">
+        ดาวน์โหลดจาก <b>code.visualstudio.com</b> แล้วติดตั้งตามปกติ
+      </p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#F3F4F6; border-radius:16px; padding:32px; display:flex; flex-direction:column;">
+          <h3 style="font-size:28px; margin-bottom:20px; display:flex; align-items:center;">
+            <i class="fa-solid fa-folder-plus text-slate" style="font-size:36px; margin-right:16px;"></i> 1. สร้างโฟลเดอร์ทำงาน
+          </h3>
+          <p style="font-size:22px; margin-bottom:16px;">
+            สร้างโฟลเดอร์ชื่อ <code>wealth-code</code> ไว้ที่ Desktop
+          </p>
+          <p style="font-size:22px; margin-bottom:16px;">
+            เปิดโปรแกรม VS Code แล้วลากโฟลเดอร์นั้นเข้ามาวาง (หรือ File > Open Folder...)
+          </p>
+        </div>
+        
+        <div style="flex:1; background:#FEFAF1; border-top:8px solid #FFCD00; border-radius:16px; padding:32px; display:flex; flex-direction:column;">
+          <h3 style="font-size:28px; margin-bottom:20px; display:flex; align-items:center;">
+            <i class="fa-solid fa-puzzle-piece text-yellow" style="font-size:36px; margin-right:16px;"></i> 2. ติดตั้งส่วนเสริม (Extensions)
+          </h3>
+          <p style="font-size:22px; margin-bottom:16px;">
+            คลิกไอคอน Extensions (สี่เหลี่ยมซ้อนกัน) ค้นหาและติดตั้ง 2 ตัวนี้:
+          </p>
+          <ul style="font-size:22px; line-height:1.6; margin-left:32px; color:#51545F;">
+            <li><b>Python</b> (โดย Microsoft)</li>
+            <li><b>Black Formatter</b> (ช่วยจัดโค้ดให้อ่านง่าย)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide5">
+    <div class="bg-symbol text-teal" style="bottom: -50px; left: -50px;">&</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#F3F4F6; color:#51545F; border: 2px solid #51545F;">TERMINAL</div>
+      <h2 style="font-size:48px; margin-bottom:24px;">ช่องทางสื่อสารกับระบบ <span class="text-slate">(Terminal)</span></h2>
+      
+      <div style="background:#EFF9F8; border-radius:16px; padding:32px; margin-bottom:24px; border-left:8px solid #00C4BA;">
+        <p style="font-size:26px; margin-bottom:12px;">
+            <b>วิธีเปิดใน VS Code:</b> ไปที่เมนูด้านบนเลือก <code>Terminal &gt; New Terminal</code>
+        </p>
+        <p style="font-size:22px; color:#51545F;">
+            ลองพิมพ์คำสั่งนี้เพื่อตรวจสอบว่าติดตั้ง Python สำเร็จหรือไม่:
+        </p>
+      </div>
+      
+      <div class="code-window" style="flex-grow:1;">
+        <div class="code-header" style="background:#000;">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title" style="color:#00C4BA;">Terminal (bash/cmd)</div>
+        </div>
+        <div class="code-body" style="background:black; color:white; flex-grow:1;">
+<span style="color:#75CF20;">user@computer</span>:<span style="color:#00C4BA;">~/wealth-code</span>$ python --version<br>
+Python 3.12.0
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide6">
+    <div class="bg-symbol text-slate" style="top: 50px; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAF6F0; color:#FCAC17; border: 2px solid #FCAC17;">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ทำไมต้องสร้างพื้นที่จำลอง <span class="text-orange">(venv)</span>?</h2>
+      <p style="font-size:24px; margin-bottom:32px;">ป้องกันปัญหาโปรแกรมพังเมื่อต้องทำหลายโปรเจกต์พร้อมกัน</p>
+      
+      <div style="display:flex; gap:32px; flex-grow:1;">
+        <div style="flex:1; background:#FFF7F8; border:4px dashed #FA595D; border-radius:24px; padding:40px; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center;">
+          <i class="fa-solid fa-earth-americas text-red" style="font-size:64px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">Global System</h3>
+          <p style="font-size:22px; color:#51545F;">ลงเครื่องมือรวมกันในเครื่อง<br>เสี่ยงต่อการที่เวอร์ชันตีกันและพังทั้งระบบ</p>
+        </div>
+        
+        <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+            <i class="fa-solid fa-arrow-right text-slate" style="font-size:48px;"></i>
+        </div>
+
+        <div style="flex:1; background:#FAFFF8; border:4px solid #75CF20; border-radius:24px; padding:40px; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center;">
+          <i class="fa-solid fa-box-open text-green" style="font-size:64px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">Virtual Environment</h3>
+          <p style="font-size:22px; color:#51545F;">สร้าง <b>"กล่องแยกเฉพาะ"</b> สำหรับ Wealth Code<br>จัดระเบียบง่าย และปลอดภัย 100%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide7">
+    <div class="bg-symbol text-orange" style="bottom: -50px; left: -50px;">#</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAF6F0; color:#FCAC17; border: 2px solid #FCAC17;">STEP 3</div>
+      <h2 style="font-size:48px; margin-bottom:24px;">คำสั่งสร้างและเปิดใช้ venv</h2>
+      
+      <h3 style="font-size:24px; margin-bottom:12px; color:#51545F;">1. สร้างพื้นที่จำลอง (พิมพ์ครั้งเดียวตอนเริ่มโปรเจกต์)</h3>
+      <div class="code-window" style="margin-bottom:24px;">
+        <div class="code-body" style="padding:16px;">
+python -m venv env
+        </div>
+      </div>
+
+      <h3 style="font-size:24px; margin-bottom:12px; color:#51545F;">2. เปิดใช้งาน (พิมพ์ทุกครั้งที่เปิดหน้าต่าง Terminal ใหม่)</h3>
+      <div class="code-window" style="margin-bottom:24px;">
+        <div class="code-body" style="padding:16px;">
+<span class="c-comment"># สำหรับ Windows</span><br>
+env\Scripts\activate<br><br>
+<span class="c-comment"># สำหรับ Mac / Linux (หรือใช้ Git Bash บน Windows)</span><br>
+source env/bin/activate
+        </div>
+      </div>
+      
+      <div style="background:#FAFFF8; border:2px solid #75CF20; padding:16px 20px; border-radius:8px; display:flex; align-items:center;">
+        <i class="fa-solid fa-circle-check text-green" style="font-size:28px; margin-right:16px;"></i>
+        <span style="font-size:22px; color:#51545F;">ถ้าเปิดสำเร็จ จะมีคำว่า <b>(env)</b> ปรากฏขึ้นที่หน้าบรรทัดคำสั่ง</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide8">
+    <div class="bg-symbol text-green" style="top: -50px; right: -50px;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAFFF8; color:#75CF20; border: 2px solid #75CF20;">STEP 4</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ติดตั้งเครื่องมือ <span class="text-green">(Libraries)</span></h2>
+      <p style="font-size:24px; margin-bottom:24px;">เมื่ออยู่ในโหมด <b>(env)</b> แล้ว ให้ติดตั้ง 3 เครื่องมือหลักที่จะใช้ตลอดหลักสูตรนี้</p>
+      
+      <div class="code-window" style="margin-bottom:32px;">
+        <div class="code-body" style="padding:24px;">
+pip install streamlit pandas numpy
+        </div>
+      </div>
+      
+      <div style="display:flex; gap:24px; flex-grow:1;">
+        <div style="flex:1; background:#FFF7F8; border-top:6px solid #FA595D; border-radius:12px; padding:20px;">
+            <h4 style="font-size:24px; color:#FA595D; margin-bottom:8px;">Streamlit</h4>
+            <p style="font-size:20px; color:#51545F;">เปลี่ยนโค้ดให้เป็น Web Dashboard สุดล้ำอย่างรวดเร็ว</p>
+        </div>
+        <div style="flex:1; background:#EFF9F8; border-top:6px solid #00C4BA; border-radius:12px; padding:20px;">
+            <h4 style="font-size:24px; color:#00C4BA; margin-bottom:8px;">Pandas</h4>
+            <p style="font-size:20px; color:#51545F;">เครื่องมือจัดการตารางข้อมูล (เหมือน Excel แต่เขียนด้วยโค้ด)</p>
+        </div>
+        <div style="flex:1; background:#FEFAF1; border-top:6px solid #FFCD00; border-radius:12px; padding:20px;">
+            <h4 style="font-size:24px; color:#FCAC17; margin-bottom:8px;">Numpy</h4>
+            <p style="font-size:20px; color:#51545F;">สุดยอดนักคำนวณคณิตศาสตร์และตัวเลขสถิติขั้นสูง</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide9">
+    <div class="bg-symbol text-slate" style="bottom: -50px; right: 150px;">@</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <i class="fa-solid fa-rocket text-teal" style="font-size:100px; margin-bottom:32px;"></i>
+      <h2 style="font-size:56px; margin-bottom:24px;">ระบบพร้อมใช้งาน!</h2>
+      <p style="font-size:28px; color:#51545F; max-width:800px; margin-bottom:40px;">
+        ทดสอบรันคำสั่ง <code>streamlit hello</code> ใน Terminal<br>ถ้ามีหน้าเว็บพรีวิวเด้งขึ้นมา แปลว่าคุณพร้อมแล้ว!
+      </p>
+      
+      <div style="border-top: 2px dashed #CBD5E1; width: 60%; padding-top: 32px; margin-top: 16px;">
+        <p style="font-size:20px; font-weight:700; color:#94A3B8; letter-spacing: 2px; margin-bottom:12px;">NEXT STEP</p>
+        <h3 style="font-size:36px; color:#00C4BA;">บทที่ 1: The Wealth Formula</h3>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

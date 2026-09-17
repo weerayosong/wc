@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 7: Break the Strategy</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script>
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+        --bsd-dark: #51545F;
+        --bsd-teal: #00C4BA;
+        --bsd-yellow: #FFCD00;
+        --bsd-red: #FA595D;
+        --bsd-green: #75CF20;
+        --bsd-orange: #FCAC17;
+        --bg-soft-teal: #EFF9F8;
+        --bg-soft-yellow: #FEFAF1;
+        --bg-soft-red: #FFF7F8;
+        --bg-soft-green: #FAFFF8;
+        --bg-soft-orange: #FAF6F0;
+        --bg-soft-gray: #F3F4F6;
+    }
+
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Sarabun', 'Inter', sans-serif; 
+        background: var(--bsd-dark); 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: var(--bsd-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Quicksand', 'Sarabun', sans-serif; 
+        font-weight: 700; 
+        color: var(--bsd-dark); 
+        margin: 0; 
+        line-height: 1.2; 
+    }
+    p { line-height: 1.5; }
+    
+    .text-slate { color: var(--bsd-dark); }
+    .text-teal { color: var(--bsd-teal); }
+    .text-yellow { color: var(--bsd-yellow); }
+    .text-red { color: var(--bsd-red); }
+    .text-green { color: var(--bsd-green); }
+    .text-orange { color: var(--bsd-orange); }
+
+    .watermark {
+        position: absolute;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        opacity: 0.05; 
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+    
+    .wm-1 { top: -50px; left: -50px; font-size: 350px; color: var(--bsd-teal); }
+    .wm-2 { bottom: -100px; right: -50px; font-size: 400px; color: var(--bsd-yellow); }
+    .wm-3 { top: -50px; right: 50px; font-size: 300px; color: var(--bsd-red); }
+    .wm-4 { bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-green); }
+    
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 64px;
+    }
+
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 12px;
+        align-self: flex-start;
+    }
+
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: var(--bsd-red); }
+    .dot-yellow { background: var(--bsd-yellow); }
+    .dot-green { background: var(--bsd-green); }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 16px 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; 
+    }
+    
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: var(--bsd-red); font-weight: 600; }
+    .c-func { color: var(--bsd-teal); }
+    .c-string { color: var(--bsd-yellow); }
+    .c-number { color: var(--bsd-green); }
+    .c-method { color: var(--bsd-teal); }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <div class="slide-container" id="slide1" style="border-top: 16px solid var(--bsd-teal);">
+    <div class="watermark wm-1">&lt;/&gt;</div>
+    <div class="watermark wm-2">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:var(--bg-soft-teal); color:var(--bsd-teal); padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px; font-family:'Quicksand', sans-serif;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 7: Break the Strategy<br><span class="text-teal">ทดสอบความเครียดโมเดลการลงทุน</span>
+      </h1>
+      <p style="font-size:32px; color:var(--bsd-dark); max-width:900px; font-weight:700;">
+        "กลยุทธ์ที่แข็งแกร่งที่สุด คือกลยุทธ์ที่รอดพ้นจากสถานการณ์ที่เลวร้ายที่สุดได้"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้การทำ Stress Test ประเมินความเสี่ยงเชิงลึกของกลยุทธ์เมื่อต้องเจอกับเหตุการณ์ที่ไม่คาดฝัน (Black Swan)
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Agenda -->
+  <div class="slide-container" id="slide2">
+    <div class="watermark wm-3">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-red); border-left: 8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-red); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">หายนะของโมเดลที่ดู "สมบูรณ์แบบ"</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); border-left: 8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-yellow); color:var(--bsd-dark); padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">Stress Testing และ Black Swan</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); border-left: 8px solid var(--bsd-teal); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-teal); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">การจำลองข้อมูลแบบสุ่ม (Randomness)</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-green); border-left: 8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-green); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Stress Test Dashboard</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-gray); border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-dark); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">ประเมินความเปราะบางของพอร์ต</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); border-left: 8px solid var(--bsd-orange); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-orange); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">ไม่มีใครทำนายอนาคตได้</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Case Study -->
+  <div class="slide-container" id="slide3">
+    <div class="watermark" style="bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-dark);">!</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-red); color:var(--bsd-red); border: 2px solid var(--bsd-red);">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">หายนะของโมเดลที่ดู "สมบูรณ์แบบ"</h2>
+      <p style="font-size:24px; margin-bottom:24px;">ทำไมผล Backtest สวยหรู ถึงมักจะพังเมื่อเจอตลาดจริง?</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1;">
+        <div style="flex:1; background:var(--bg-soft-gray); border-radius:16px; padding:32px; display:flex; flex-direction:column; justify-content:center; text-align:center;">
+          <i class="fa-solid fa-chart-line text-slate" style="font-size:64px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">นายทุนเชื่อมั่นใน Backtest</h3>
+          <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6;">
+            โมเดลนี้ชนะตลาดมาตลอด 10 ปีที่ผ่านมา กราฟพุ่งขึ้นสวยงาม ไม่มีทางเจ๊ง!
+          </p>
+        </div>
+        
+        <div style="flex:1; background:var(--bg-soft-red); border-radius:16px; padding:32px; display:flex; flex-direction:column; justify-content:center; text-align:center; border: 4px solid var(--bsd-red);">
+          <i class="fa-solid fa-meteor text-red" style="font-size:64px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">เกิดวิกฤต "หงส์ดำ" (Black Swan)</h3>
+          <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6;">
+            จู่ๆ ก็มีโรคระบาดระดับโลกเกิดขึ้น! (เหตุการณ์ที่ไม่เคยมีในข้อมูลอดีต) โมเดลรับมือไม่ทัน พอร์ตพังพินาศ
+          </p>
+        </div>
+      </div>
+      <div style="background:var(--bsd-red); color:white; padding:20px; border-radius:12px; text-align:center; margin-top:24px;">
+        <h3 style="color:white; font-size:30px; margin:0;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:12px;"></i> อดีตไม่ได้การันตีอนาคต! เราต้องทดสอบโมเดลกับ "สิ่งที่แย่กว่าที่เคยเจอ"</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Concept -->
+  <div class="slide-container" id="slide4">
+    <div class="watermark wm-3">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">Stress Testing และ Black Swan</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; flex-grow:1;">
+        <div style="background:var(--bg-soft-teal); padding:32px; border-radius:16px; border-left: 8px solid var(--bsd-teal);">
+          <div style="font-size:48px; color:var(--bsd-teal); margin-bottom:16px;"><i class="fa-solid fa-weight-hanging"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px; color:var(--bsd-teal)">Stress Testing</h3>
+          <p style="font-size:22px; color:#51545F;">
+            การจำลองสถานการณ์ตลาดที่รุนแรงกว่าปกติ เพื่อดูว่าพอร์ตฟอลิโอหรือกลยุทธ์ของเราจะ "พัง" หรือไม่ เช่น ตลาดหุ้นตก 50% รวดเดียว
+          </p>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); padding:32px; border-radius:16px; border-left: 8px solid var(--bsd-orange);">
+          <div style="font-size:48px; color:var(--bsd-orange); margin-bottom:16px;"><i class="fa-solid fa-crow"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px; color:var(--bsd-orange)">Black Swan (หงส์ดำ)</h3>
+          <p style="font-size:22px; color:#51545F;">
+            เหตุการณ์ที่คาดไม่ถึงอย่างรุนแรง มีโอกาสเกิดน้อยมาก (Rare Event) แต่เมื่อเกิดแล้วจะส่งผลกระทบมหาศาล และเรามักจะหาเหตุผลอธิบายได้หลังเกิดไปแล้ว
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Code Along -->
+  <div class="slide-container" id="slide5">
+    <div class="watermark wm-1" style="left: auto; right: -50px; top: 50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-teal); color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">CODE ALONG</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">การจำลองข้อมูลแบบสุ่ม (Random Shocks)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>lesson7_intro.py</code> ลองใช้ Numpy จำลองความผันผวนแบบสุ่ม</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson7_intro.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> numpy <span class="c-keyword">as</span> np<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+<span class="c-comment"># ตั้งค่าฐาน: พอร์ตเริ่ม 100 บาท, ต้องการจำลอง 12 เดือน</span><br>
+initial_capital = <span class="c-number">100</span><br>
+months = <span class="c-number">12</span><br>
+<br>
+<span class="c-comment"># np.random.normal(เฉลี่ย, ความผันผวน, จำนวน) สร้างข้อมูลแบบสุ่ม (ระฆังคว่ำ)</span><br>
+<span class="c-comment"># จำลองผลตอบแทนเฉลี่ย 1% ต่อเดือน ผันผวน 5%</span><br>
+random_returns = np.<span class="c-method">random.normal</span>(<span class="c-number">0.01</span>, <span class="c-number">0.05</span>, months)<br>
+<br>
+<span class="c-comment"># คำนวณมูลค่าพอร์ต: (1 + return) ทบต้นไปเรื่อยๆ</span><br>
+portfolio_values = initial_capital * (<span class="c-number">1</span> + random_returns).<span class="c-method">cumprod()</span><br>
+<br>
+<span class="c-func">print</span>(portfolio_values)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Build Step 1 -->
+  <div class="slide-container" id="slide6">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 1/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เตรียมโครงสร้าง Dashboard</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>stress_dash.py</code> สร้างส่วนรับค่าพารามิเตอร์สำหรับทดสอบความเครียด</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">stress_dash.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<span class="c-keyword">import</span> numpy <span class="c-keyword">as</span> np<br>
+<br>
+st.set_page_config(layout=<span class="c-string">"wide"</span>)<br>
+st.title(<span class="c-string">"⚡ Stress Test Dashboard"</span>)<br>
+<br>
+st.sidebar.header(<span class="c-string">"ตั้งค่าสถานการณ์จำลอง"</span>)<br>
+<span class="c-comment"># ให้ผู้ใช้เลือกระดับความรุนแรงของวิกฤต (ความผันผวน)</span><br>
+volatility_shock = st.sidebar.slider(<span class="c-string">"ระดับความผันผวนของตลาด (%)"</span>, <span class="c-number">5</span>, <span class="c-number">50</span>, <span class="c-number">15</span>) / <span class="c-number">100</span><br>
+<span class="c-comment"># จำลองเหตุการณ์ Black Swan: ราคาตกฮวบในเดือนเดียว</span><br>
+black_swan_drop = st.sidebar.slider(<span class="c-string">"Black Swan Drop (%)"</span>, <span class="c-number">0</span>, <span class="c-number">80</span>, <span class="c-number">20</span>) / <span class="c-number">100</span><br>
+<span class="c-comment"># เลือกว่าจะให้เกิดวิกฤตในเดือนไหน (สมมติ 12 เดือน)</span><br>
+crash_month = st.sidebar.slider(<span class="c-string">"เดือนที่เกิดวิกฤต"</span>, <span class="c-number">1</span>, <span class="c-number">12</span>, <span class="c-number">6</span>)<br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Build Step 2 -->
+  <div class="slide-container" id="slide7">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 2/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">สร้างข้อมูลจำลองพื้นฐาน</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อ: จำลองผลตอบแทนตลาด 12 เดือน แบบมีทั้งขึ้นและลง</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">stress_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 1. สร้าง Base Case (ตลาดปกติ) ---</span><br>
+months = <span class="c-number">12</span><br>
+<span class="c-comment"># สมมติว่าตลาดปกติให้ผลตอบแทนเฉลี่ย 1% ต่อเดือน ผันผวนน้อย</span><br>
+base_returns = np.<span class="c-method">random.normal</span>(<span class="c-number">0.01</span>, <span class="c-number">0.02</span>, months)<br>
+<br>
+df = pd.DataFrame({<span class="c-string">"Month"</span>: <span class="c-func">list</span>(<span class="c-func">range</span>(<span class="c-number">1</span>, months + <span class="c-number">1</span>))})<br>
+df[<span class="c-string">"Base_Return"</span>] = base_returns<br>
+<br>
+<span class="c-comment"># --- 2. นำข้อมูลจำลองไปใส่ใน DataFrame ---</span><br>
+<span class="c-comment"># คำนวณการเติบโตแบบทบต้น (เริ่มที่ 100)</span><br>
+df[<span class="c-string">"Base_Portfolio"</span>] = <span class="c-number">100</span> * (<span class="c-number">1</span> + df[<span class="c-string">"Base_Return"</span>]).<span class="c-method">cumprod()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Build Step 3 -->
+  <div class="slide-container" id="slide8">
+    <div class="watermark wm-1" style="top: auto; bottom: -50px; left: auto; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 3/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">ใส่ Stress Shocks ลงไป</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อ: ตอนนี้เราจะเอาพารามิเตอร์ความเครียดที่ปรับใน Sidebar มาใส่ในโมเดล</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">stress_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. สร้าง Stress Case (ตลาดโหดร้าย) ---</span><br>
+<span class="c-comment"># จำลองตลาดผันผวนสูง (ตามค่า volatility_shock ที่ปรับไว้)</span><br>
+stress_returns = np.<span class="c-method">random.normal</span>(<span class="c-number">0.00</span>, volatility_shock, months)<br>
+<br>
+<span class="c-comment"># แทรก Black Swan Drop ลงในเดือนที่กำหนด</span><br>
+<span class="c-comment"># เดือนในโค้ดเริ่มที่ 0 ดังนั้นต้อง -1</span><br>
+stress_returns[crash_month - <span class="c-number">1</span>] = -black_swan_drop <br>
+<br>
+df[<span class="c-string">"Stress_Return"</span>] = stress_returns<br>
+df[<span class="c-string">"Stressed_Portfolio"</span>] = <span class="c-number">100</span> * (<span class="c-number">1</span> + df[<span class="c-string">"Stress_Return"</span>]).<span class="c-method">cumprod()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Build Step 4 -->
+  <div class="slide-container" id="slide9">
+    <div class="watermark" style="top: -50px; right: 150px; font-size: 300px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 4/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">หา Drawdown แบบเร็วๆ</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อ: เราอยากรู้ว่าจุดต่ำสุดของพอร์ต Stressed Portfolio ลงไปลึกแค่ไหน</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">stress_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 4. หา Max Drawdown ของ Stress Case ---</span><br>
+df[<span class="c-string">"Peak"</span>] = df[<span class="c-string">"Stressed_Portfolio"</span>].<span class="c-method">cummax()</span><br>
+df[<span class="c-string">"Drawdown"</span>] = (df[<span class="c-string">"Stressed_Portfolio"</span>] - df[<span class="c-string">"Peak"</span>]) / df[<span class="c-string">"Peak"</span>]<br>
+max_dd = df[<span class="c-string">"Drawdown"</span>].<span class="c-method">min()</span><br>
+<br>
+<span class="c-comment"># --- 5. แสดงผล UI ---</span><br>
+st.subheader(<span class="c-string">"📉 เปรียบเทียบ: ตลาดปกติ VS ตลาดวิกฤต"</span>)<br>
+df_chart = df.<span class="c-method">set_index</span>(<span class="c-string">"Month"</span>)[[<span class="c-string">"Base_Portfolio"</span>, <span class="c-string">"Stressed_Portfolio"</span>]]<br>
+st.line_chart(df_chart)<br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Build Step 5 -->
+  <div class="slide-container" id="slide10">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 5/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">แสดง Metrics สุดท้าย</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดชุดสุดท้าย: สรุปตัวเลขเพื่อตัดสินความแข็งแกร่งของพอร์ต</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">stress_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+c1, c2, c3 = st.columns(<span class="c-number">3</span>)<br>
+final_base = df[<span class="c-string">"Base_Portfolio"</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>]<br>
+final_stress = df[<span class="c-string">"Stressed_Portfolio"</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>]<br>
+<br>
+c1.metric(<span class="c-string">"มูลค่าสุดท้าย (Base)"</span>, <span class="c-string">f"฿{final_base:.2f}"</span>)<br>
+c2.metric(<span class="c-string">"มูลค่าสุดท้าย (Stress)"</span>, <span class="c-string">f"฿{final_stress:.2f}"</span>, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delta=<span class="c-string">f"{(final_stress - 100):.2f}%"</span>)<br>
+c3.metric(<span class="c-string">"Max Drawdown (วิกฤต)"</span>, <span class="c-string">f"{max_dd*100:.2f}%"</span>)<br>
+<br>
+<span class="c-keyword">if</span> final_stress < <span class="c-number">80</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.error(<span class="c-string">"💥 พอร์ตนี้เปราะบางเกินไป! มูลค่าลดลงอย่างมีนัยสำคัญเมื่อเจอวิกฤต"</span>)<br>
+<span class="c-keyword">else</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.success(<span class="c-string">"🛡️ พอร์ตมีความทนทาน (Resilient) แม้เจอตลาดโหดก็ยังรอด!"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 11: Build Result -->
+  <div class="slide-container" id="slide11">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลลัพธ์: Stress Test Dashboard</h2>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; height: 480px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden; margin-top: 10px;">
+          <div style="background: var(--bg-soft-gray); padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-red);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-yellow);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-green);"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <div style="padding: 24px; font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; overflow-y:hidden;">
+              <h1 style="font-size: 28px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;"><i class="fa-solid fa-bolt" style="margin-right:8px; color:var(--bsd-yellow);"></i>Stress Test Dashboard</h1>
+              
+              <h2 style="font-size: 20px; margin-bottom: 12px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📉 เปรียบเทียบ: ตลาดปกติ VS ตลาดวิกฤต</h2>
+              
+              <div style="display:flex; gap:24px; margin-bottom:16px;">
+                  <div style="flex:2; border:1px solid #E5E7EB; border-radius:8px; padding:16px; background:#F9FAFB; height:120px; display:flex; flex-direction:column; justify-content:center;">
+                     <div style="font-size:14px; color:#4B5563; margin-bottom:8px;"><i class="fa-solid fa-chart-line" style="margin-right:8px;"></i>Base_Portfolio vs Stressed_Portfolio</div>
+                     <div style="height:60px; background:linear-gradient(90deg, #E5E7EB 40%, #FA595D 40%, #FA595D 45%, #E5E7EB 45%); border-bottom:2px solid #51545F;"></div>
+                  </div>
+              </div>
+
+              <div style="display: flex; gap: 24px; margin-bottom: 16px;">
+                  <div style="flex: 1; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">มูลค่าสุดท้าย (Base)</div>
+                      <div style="font-size: 24px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">฿112.45</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">มูลค่าสุดท้าย (Stress)</div>
+                      <div style="font-size: 24px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">฿68.30</div>
+                      <div style="font-size: 14px; font-weight: 600; color: var(--bsd-red);"><i class="fa-solid fa-arrow-down"></i> -31.70%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">Max Drawdown (วิกฤต)</div>
+                      <div style="font-size: 24px; font-weight: 700; color: var(--bsd-red); font-family: 'Inter', sans-serif;">-45.20%</div>
+                  </div>
+              </div>
+              <div style="background:var(--bg-soft-red); color:var(--bsd-red); padding:12px; border-radius:8px; font-size:14px; font-weight:600; border: 1px solid var(--bsd-red);">
+                  💥 พอร์ตนี้เปราะบางเกินไป! มูลค่าลดลงอย่างมีนัยสำคัญเมื่อเจอวิกฤต
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12: Defend -->
+  <div class="slide-container" id="slide12">
+    <div class="watermark wm-3" style="bottom: 50px; right: -50px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-gray); color:var(--bsd-dark); border: 2px solid var(--bsd-dark);">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">ประเมินความเปราะบางของพอร์ต</h2>
+      <p style="font-size:24px; margin-bottom:24px;">เราจะใช้ Stress Test เพื่อปรับปรุงกลยุทธ์ได้อย่างไร?</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-yellow); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-yellow);"><i class="fa-solid fa-screwdriver-wrench" style="margin-right:12px;"></i> ปรับแก้กลยุทธ์ (Tweaking)</h3>
+            <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6; margin-bottom:12px;">
+                ถ้า Stress Test บอกว่าพอร์ตเราจะพังเมื่อตลาดหุ้นตก 40% เราก็ต้องกลับไปที่ <strong>Asset Allocation (บทที่ 5)</strong> เพื่อลดสัดส่วนหุ้นลง หรือหา <strong>Tactical Rule (บทที่ 6)</strong> ที่ไวขึ้น
+            </p>
+        </div>
+
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-teal); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-teal);"><i class="fa-solid fa-brain" style="margin-right:12px;"></i> เตรียมใจรับมือ (Psychology)</h3>
+            <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6; margin-bottom:12px;">
+                อย่างน้อยถ้าวิกฤตเกิดขึ้นจริง เราก็ "รู้ล่วงหน้า" แล้วว่าพอร์ตเราจะติดลบได้มากสุดแค่ไหน ทำให้เราไม่ตกใจกลัว (Panic Sell) เหมือนนาย A ในเคสก่อนๆ
+            </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13: Exit -->
+  <div class="slide-container" id="slide13">
+    <div class="watermark wm-2" style="top: -50px; left: -50px; right: auto; bottom: auto;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:var(--bg-soft-orange); color:var(--bsd-orange); border: 2px solid var(--bsd-orange); align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:40px; text-align:center;">ไม่มีใครทำนายอนาคตได้</h2>
+      
+      <div style="background:var(--bsd-dark); color:white; border-radius:20px; padding:40px; margin-bottom:40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); width:100%; max-width:900px; text-align:center;">
+        <h3 style="color:white; font-size:36px; margin-bottom:20px;">
+            <i class="fa-solid fa-umbrella text-teal" style="margin-right:12px;"></i> The Purpose of Models
+        </h3>
+        <p style="font-size:26px; line-height:1.6; color:#E5E7EB;">
+            "โมเดลทางการเงินทุกอัน 'ผิด' หมด<br>แต่บางอันก็มีประโยชน์"<br><br>
+            <i>(All models are wrong, but some are useful)</i><br>
+            - George E. P. Box
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:24px; border: 4px dashed var(--bsd-yellow); border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 26px; font-weight: 700; color: var(--bsd-yellow); margin:0; line-height:1.5;">
+            "เราใช้โค้ดและข้อมูล ไม่ใช่เพื่อเดาว่าพรุ่งนี้หุ้นจะขึ้นหรือลง<br>แต่เพื่อสร้างพอร์ตที่พร้อมรับมือกับทุกสถานการณ์!"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

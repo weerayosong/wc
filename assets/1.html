@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 1: The Wealth Formula</title>
+  
+  <!-- Fonts: Quicksand (Header), Inter (Eng/Numbers), Sarabun (Thai Text) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Inter:wght@400;500;700&family=Sarabun:wght@400;500;700;800&display=swap">
+  
+  <!-- FontAwesome for Icons (แทนที่ Emoji) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax สำหรับแสดงผลสูตรคณิตศาสตร์อย่างสวยงาม -->
+  <script>
+      window.MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+      };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* นำเสนอแบบ Scrollable Slides */
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Inter', 'Sarabun', sans-serif; 
+        background: #51545F; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    /* 16:9 Slide Container (1280x720) - ป้องกันเนื้อหาล้น */
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; /* ซ่อนสิ่งที่ล้น */
+      background: #FFFFFF;
+      color: #51545F;
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', 'Sarabun', sans-serif; font-weight: 700; color: #51545F; margin: 0; line-height: 1.2; }
+    p { line-height: 1.5; }
+    
+    /* BSD Brand Colors */
+    .text-slate { color: #51545F; }
+    .text-teal { color: #00C4BA; }
+    .text-yellow { color: #FFCD00; }
+    .text-red { color: #FA595D; }
+    .text-green { color: #75CF20; }
+    .text-orange { color: #FCAC17; }
+    
+    .bg-soft-teal { background: #EFF9F8; }
+    .bg-soft-yellow { background: #FEFAF1; }
+    .bg-soft-red { background: #FFF7F8; }
+    .bg-soft-green { background: #FAFFF8; }
+    .bg-soft-orange { background: #FAF6F0; }
+
+    /* Graphic Assets (ลายน้ำพื้นหลัง) */
+    .bg-symbol {
+      position: absolute;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 350px;
+      line-height: 1;
+      opacity: 0.05; 
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+    
+    /* Content Wrapper ควบคุมระยะขอบให้พอดี 720px */
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 48px 64px; /* ปรับลด padding บน-ล่าง เพื่อเพิ่มพื้นที่แนวตั้ง */
+    }
+
+    /* Tag Styles for Lesson Stages */
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 16px;
+        align-self: flex-start;
+    }
+
+    /* Code Window UI (ปรับขนาดให้กระชับขึ้น) */
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #FA595D; }
+    .dot-yellow { background: #FFCD00; }
+    .dot-green { background: #75CF20; }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 20px; /* ลดขนาดฟอนต์โค้ดลงเล็กน้อย */
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; /* ห้าม Scroll แนวตั้งในสไลด์ */
+    }
+    
+    /* Code Syntax Highlighting */
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: #FA595D; font-weight: 600; }
+    .c-func { color: #00C4BA; }
+    .c-string { color: #FFCD00; }
+    .c-number { color: #75CF20; }
+    
+    /* Utility */
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <div class="slide-container" id="slide1" style="border-top: 16px solid #00C4BA;">
+    <div class="bg-symbol text-teal" style="top: -50px; left: -50px;">&lt;/&gt;</div>
+    <div class="bg-symbol text-yellow" style="bottom: -100px; right: -50px;">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:#EFF9F8; color:#00C4BA; padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 1: The Wealth Formula<br><span class="text-teal">สมการความมั่งคั่ง</span>
+      </h1>
+      <p style="font-size:32px; color:#51545F; max-width:900px; font-weight:700;">
+        "เป้าหมายในอนาคตของเรา จะมีราคาเท่าไหร่?"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้ผลกระทบของเงินเฟ้อ ดอกเบี้ยทบต้น และการสร้าง Financial Calculator ด้วย Python
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Agenda -->
+  <div class="slide-container" id="slide2">
+    <div class="bg-symbol text-red" style="top: -50px; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:#FFF7F8; border-left: 8px solid #FA595D; border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:#FA595D; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">เป้าหมายในฝันของคุณ ราคาเท่าไหร่?</p>
+          </div>
+        </div>
+
+        <div style="background:#FEFAF1; border-left: 8px solid #FFCD00; border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:#FFCD00; color:#51545F; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">พลังของเวลา, เงินเฟ้อ และความมั่งคั่ง</p>
+          </div>
+        </div>
+
+        <div style="background:#EFF9F8; border-left: 8px solid #00C4BA; border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:#00C4BA; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">เขียนตัวแปรและฟังก์ชันคำนวณการเงิน</p>
+          </div>
+        </div>
+
+        <div style="background:#FAFFF8; border-left: 8px solid #75CF20; border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:#75CF20; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Goal Calculator ด้วย Streamlit</p>
+          </div>
+        </div>
+
+        <div style="background:#F3F4F6; border-left: 8px solid #51545F; border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:#51545F; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">วิเคราะห์ Trade-offs และนำเสนอผลลัพธ์</p>
+          </div>
+        </div>
+
+        <div style="background:#FAF6F0; border-left: 8px solid #FCAC17; border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:#FCAC17; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">สรุปกฎเลข 72 (Rule of 72)</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: CASE -->
+  <div class="slide-container" id="slide3">
+    <div class="bg-symbol text-slate" style="bottom: -50px; left: -50px;">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FFF7F8; color:#FA595D; border: 2px solid #FA595D;">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">เป้าหมายในฝันของคุณ คืออะไร?</h2>
+      <p style="font-size:28px; margin-bottom:24px;">ลองจินตนาการถึงสิ่งที่คุณอยากได้ในอีก <b>10 ปีข้างหน้า</b>...</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1;">
+        <div style="flex:1; background:#EFF9F8; border-radius:16px; padding:32px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <i class="fa-solid fa-car-side text-teal" style="font-size:72px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">รถยนต์คันแรก</h3>
+          <p style="font-size:24px; color:#51545F; background:#FFFFFF; padding:12px 24px; border-radius:12px; border:1px solid #00C4BA;">ราคาปัจจุบัน: <b>1,000,000 บาท</b></p>
+        </div>
+        
+        <div style="flex:1; background:#FEFAF1; border-radius:16px; padding:32px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <i class="fa-solid fa-graduation-cap text-yellow" style="font-size:72px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">ทุนเรียนต่อ ป.โท</h3>
+          <p style="font-size:24px; color:#51545F; background:#FFFFFF; padding:12px 24px; border-radius:12px; border:1px solid #FFCD00;">ราคาปัจจุบัน: <b>1,500,000 บาท</b></p>
+        </div>
+      </div>
+      
+      <div style="background:#FA595D; color:white; padding:20px; border-radius:12px; text-align:center; margin-top:24px;">
+        <h3 style="color:white; font-size:32px;"><i class="fa-solid fa-circle-question" style="margin-right:12px;"></i> คำถาม: ในอีก 10 ปี ของพวกนี้จะยัง "ราคาเท่าเดิม" ไหม?</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: CONCEPT - Inflation -->
+  <div class="slide-container" id="slide4">
+    <div class="bg-symbol text-red" style="top: -50px; right: -50px;">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FEFAF1; color:#FFCD00; border: 2px solid #FFCD00;">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">โจรล่องหนที่ชื่อว่า <span class="text-red">"เงินเฟ้อ" (Inflation)</span></h2>
+      <p style="font-size:28px; margin-bottom:24px;">
+        เงินเฟ้อ คือภาวะที่ของแพงขึ้น ทำให้เงินในกระเป๋าเรามี <b>"อำนาจซื้อ (Purchasing Power)"</b> ลดลง
+      </p>
+      
+      <div style="background:#FFF7F8; border:4px solid #FA595D; border-radius:20px; padding:32px; display:flex; flex-direction:column; align-items:center;">
+        <p style="font-size:28px; font-weight:700; color:#FA595D; margin-bottom:16px;">
+            <i class="fa-solid fa-calculator" style="margin-right:8px;"></i> สูตรคำนวณราคาสินค้าในอนาคต (Future Value)
+        </p>
+        
+        <!-- MathJax Formula (ปรับขนาดลงนิดหน่อยกันล้น) -->
+        <div style="font-size:48px; margin-bottom:32px; background:white; padding:20px 40px; border-radius:12px;">
+          $$ FV = PV \times (1 + r)^n $$
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; width:100%;">
+          <div style="background:white; padding:16px; border-radius:8px; font-size:20px;"><strong class="text-red">FV (Future Value):</strong> ราคาสินค้าในอนาคต</div>
+          <div style="background:white; padding:16px; border-radius:8px; font-size:20px;"><strong class="text-red">PV (Present Value):</strong> ราคาปัจจุบัน</div>
+          <div style="background:white; padding:16px; border-radius:8px; font-size:20px;"><strong class="text-red">r (Rate):</strong> อัตราเงินเฟ้อ (ทศนิยม เช่น 0.03)</div>
+          <div style="background:white; padding:16px; border-radius:8px; font-size:20px;"><strong class="text-red">n (Time):</strong> จำนวนปี</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: CONCEPT - Income vs Wealth -->
+  <div class="slide-container" id="slide5">
+    <div class="bg-symbol text-teal" style="bottom: -50px; left: -50px;">&</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FEFAF1; color:#FFCD00; border: 2px solid #FFCD00;">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:24px;">Income <span class="text-slate">vs</span> Wealth</h2>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#EFF9F8; border-top:12px solid #00C4BA; border-radius:16px; padding:32px; display:flex; flex-direction:column;">
+          <div style="font-size:56px; margin-bottom:16px; color:#00C4BA;"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px; color:#00C4BA;">Income (รายได้)</h3>
+          <p style="font-size:24px; margin-bottom:24px;">
+            คือสิ่งที่คุณหามาได้จากการทำงาน (Active Income) เช่น เงินเดือน หรือค่าจ้าง
+          </p>
+          <div style="background:white; padding:16px; border-radius:8px; font-style:italic; font-size:20px; margin-top:auto; border-left:4px solid #00C4BA;">
+            "รายได้เยอะ ไม่ได้แปลว่ารวย... ถ้าใช้หมด"
+          </div>
+        </div>
+        
+        <div style="flex:1; background:#FEFAF1; border-top:12px solid #FFCD00; border-radius:16px; padding:32px; display:flex; flex-direction:column;">
+          <div style="font-size:56px; margin-bottom:16px; color:#FFCD00;"><i class="fa-solid fa-piggy-bank"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px; color:#FCAC17;">Wealth (ความมั่งคั่ง)</h3>
+          <p style="font-size:24px; margin-bottom:24px;">
+            คือเงินและสินทรัพย์ที่ <b>เหลือเก็บ</b> และถูกนำไปลงทุนให้เติบโต (Passive Income)
+          </p>
+          <div style="background:white; padding:16px; border-radius:8px; font-style:italic; font-size:20px; margin-top:auto; border-left:4px solid #FFCD00;">
+            "ความมั่งคั่ง คือสิ่งที่จะปกป้องเราจากเงินเฟ้อ"
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: CODE ALONG - Variables -->
+  <div class="slide-container" id="slide6">
+    <div class="bg-symbol text-slate" style="top: 50px; right: -50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#EFF9F8; color:#00C4BA; border: 2px solid #00C4BA;">CODE ALONG</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">สร้างตัวแปรเก็บข้อมูล (Variables)</h2>
+      <p style="font-size:24px; margin-bottom:16px;">เปิด VS Code สร้างไฟล์ชื่อ <code>lesson1.py</code> แล้วพิมพ์โค้ดเพื่อแปลสูตรคณิตศาสตร์เป็น Python</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson1.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># 1. กำหนดข้อมูลปัจจุบัน (สมมติเป้าหมายคือซื้อรถ)</span><br>
+present_value = <span class="c-number">1000000</span>  <span class="c-comment"># ราคาปัจจุบัน 1 ล้านบาท</span><br>
+inflation_rate = <span class="c-number">0.03</span>    <span class="c-comment"># อัตราเงินเฟ้อเฉลี่ย 3% ต่อปี</span><br>
+years = <span class="c-number">10</span>               <span class="c-comment"># ระยะเวลา 10 ปี</span><br>
+<br>
+<span class="c-comment"># 2. คำนวณราคาในอนาคต (ยกกำลังใน Python ใช้ **)</span><br>
+future_value = present_value * ((<span class="c-number">1</span> + inflation_rate) ** years)<br>
+<br>
+<span class="c-comment"># 3. แสดงผล (ใช้ f-string เพื่อจัดรูปแบบตัวเลขให้มีคอมม่า)</span><br>
+<span class="c-func">print</span>(<span class="c-string">f"ราคาเป้าหมายในอีก {years} ปี: {future_value:,.2f} บาท"</span>)
+        </div>
+      </div>
+      
+      <div style="background:#FAFFF8; border:2px solid #75CF20; padding:16px 20px; border-radius:8px; margin-top:16px; font-size:22px;">
+        <i class="fa-solid fa-terminal text-green"></i> <strong class="text-green">Output:</strong> ราคาเป้าหมายในอีก 10 ปี: 1,343,916.38 บาท
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: CODE ALONG - Functions -->
+  <div class="slide-container" id="slide7">
+    <div class="bg-symbol text-orange" style="bottom: -50px; left: -50px;">#</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#EFF9F8; color:#00C4BA; border: 2px solid #00C4BA;">CODE ALONG</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">สร้างฟังก์ชัน (Function) ไว้ใช้งานซ้ำ</h2>
+      <p style="font-size:24px; margin-bottom:16px;">เพื่อให้เราเรียกใช้งานสูตรได้หลายรอบโดยไม่ต้องพิมพ์ใหม่ ให้ใช้ <code>def</code></p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson1.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">def</span> <span class="c-func">calculate_future_cost</span>(pv, rate, n):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"""ฟังก์ชันคำนวณมูลค่าในอนาคต (FV)"""</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;fv = pv * ((<span class="c-number">1</span> + rate) ** n)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-keyword">return</span> fv<br>
+<br>
+<span class="c-comment"># ลองเรียกใช้งานฟังก์ชันกับเป้าหมายที่ต่างกัน</span><br>
+car_cost = calculate_future_cost(<span class="c-number">1000000</span>, <span class="c-number">0.03</span>, <span class="c-number">10</span>)<br>
+house_cost = calculate_future_cost(<span class="c-number">5000000</span>, <span class="c-number">0.03</span>, <span class="c-number">10</span>)<br>
+<br>
+<span class="c-func">print</span>(<span class="c-string">f"ค่ารถ: {car_cost:,.2f} | ค่าบ้าน: {house_cost:,.2f}"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: BUILD - Dashboard Setup -->
+  <div class="slide-container" id="slide8">
+    <div class="bg-symbol text-green" style="top: -50px; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAFFF8; color:#75CF20; border: 2px solid #75CF20;">BUILD PROJECT (Step 1/4)</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ภารกิจ: Financial Goal Calculator</h2>
+      <p style="font-size:24px; margin-bottom:20px;">เราจะนำฟังก์ชันมาสร้างเป็น Web Dashboard ด้วย <strong class="text-red">Streamlit</strong></p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1;">
+        <!-- Step 1 -->
+        <div style="flex:1; background:#F3F4F6; border-radius:12px; padding:24px; display:flex; flex-direction:column;">
+            <h3 style="font-size:28px; margin-bottom:12px; color:#FA595D;"><i class="fa-solid fa-file-code"></i> 1. สร้างไฟล์ใหม่</h3>
+            <p style="font-size:20px; margin-bottom:12px;">สร้างไฟล์ชื่อ <code>app.py</code></p>
+            <div class="code-window" style="margin-top:0;">
+                <div class="code-header"><div class="code-title">app.py</div></div>
+                <div class="code-body" style="padding:16px; font-size:18px;">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br><br>
+st.title(<span class="c-string">"🎯 Goal Calculator"</span>)<br>
+st.write(<span class="c-string">"คำนวณเป้าหมาย สู้เงินเฟ้อ!"</span>)
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div style="flex:1; background:#F3F4F6; border-radius:12px; padding:24px; display:flex; flex-direction:column;">
+            <h3 style="font-size:28px; margin-bottom:12px; color:#00C4BA;"><i class="fa-solid fa-play"></i> 2. รันเพื่อดูหน้าเว็บ</h3>
+            <p style="font-size:20px; margin-bottom:12px;">เปิด Terminal พิมพ์คำสั่งรัน:</p>
+            <div class="code-window" style="margin-top:0;">
+                <div class="code-header" style="background:#000;"><div class="code-title" style="color:#00C4BA;">Terminal (bash)</div></div>
+                <div class="code-body" style="padding:16px; font-size:18px; background:black; color:white;">
+streamlit run app.py
+                </div>
+            </div>
+            <p style="font-size:18px; margin-top:16px; color:#51545F;">* หน้าเว็บจะเด้งขึ้นมาในเบราว์เซอร์อัตโนมัติ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: BUILD - User Inputs (Part 1) -->
+  <div class="slide-container" id="slide9">
+    <div class="bg-symbol text-slate" style="bottom: -50px; right: 150px;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAFFF8; color:#75CF20; border: 2px solid #75CF20;">BUILD PROJECT (Step 2/4)</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">รับค่าจากผู้ใช้: เป้าหมาย (ซ้าย)</h2>
+      <p style="font-size:24px; margin-bottom:16px;">พิมพ์โค้ดนี้ต่อลงไปใน <code>app.py</code> เพื่อสร้างหน้าต่างแบ่งครึ่งซ้าย-ขวา</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">app.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># สร้างหน้าต่างแบ่งครึ่งซ้าย-ขวา</span><br>
+col1, col2 = st.columns(<span class="c-number">2</span>)<br>
+<br>
+<span class="c-comment"># ส่วนที่ 1: ข้อมูลเป้าหมาย (ฝั่งซ้าย)</span><br>
+<span class="c-keyword">with</span> col1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.subheader(<span class="c-string">"เป้าหมายของคุณ"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;goal_name = st.text_input(<span class="c-string">"ชื่อเป้าหมาย"</span>, <span class="c-string">"รถยนต์คันแรก"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pv = st.number_input(<span class="c-string">"ราคาปัจจุบัน (บาท)"</span>, value=<span class="c-number">1000000</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;years = st.slider(<span class="c-string">"ระยะเวลา (ปี)"</span>, <span class="c-number">1</span>, <span class="c-number">40</span>, <span class="c-number">10</span>)
+        </div>
+      </div>
+      <p style="font-size:22px; margin-top:16px; color:#FA595D; font-weight:bold;">
+        <i class="fa-solid fa-triangle-exclamation"></i> ระวังเรื่องการย่อหน้า (Indentation) ในบล็อก with ให้ดีนะครับ!
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 10: BUILD - User Inputs (Part 2) -->
+  <div class="slide-container" id="slide10">
+    <div class="bg-symbol text-slate" style="top: -50px; right: 150px;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAFFF8; color:#75CF20; border: 2px solid #75CF20;">BUILD PROJECT (Step 3/4)</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">รับค่าจากผู้ใช้: เศรษฐกิจ (ขวา)</h2>
+      <p style="font-size:24px; margin-bottom:16px;">พิมพ์โค้ดนี้ต่อลงไป เพื่อรับค่าอัตราเงินเฟ้อในคอลัมน์ฝั่งขวา</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">app.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># ส่วนที่ 2: สมมติฐานเศรษฐกิจ (ฝั่งขวา)</span><br>
+<span class="c-keyword">with</span> col2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.subheader(<span class="c-string">"สมมติฐานเศรษฐกิจ"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;inflation = st.number_input(<span class="c-string">"เงินเฟ้อคาดการณ์ (%)"</span>, value=<span class="c-number">3.0</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;inf_rate = inflation / <span class="c-number">100</span>  <span class="c-comment"># แปลงเปอร์เซ็นต์เป็นทศนิยมเพื่อใช้คำนวณ</span>
+        </div>
+      </div>
+      
+      <div style="background:#EFF9F8; border-left: 6px solid #00C4BA; padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 22px; margin:0;">
+            <i class="fa-solid fa-lightbulb text-teal"></i> <b>Tip:</b> กด <code>Ctrl + S</code> (Save) แล้วไปดูที่หน้าเว็บ กดปุ่ม <b>"Always rerun"</b> เพื่อดูผลลัพธ์ทันที!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 11: BUILD - Calculate & Display -->
+  <div class="slide-container" id="slide11">
+    <div class="bg-symbol text-teal" style="top: -50px; left: -50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAFFF8; color:#75CF20; border: 2px solid #75CF20;">BUILD PROJECT (Step 4/4)</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">คำนวณและแสดงผล (Metric)</h2>
+      <p style="font-size:24px; margin-bottom:16px;">
+        นำฟังก์ชัน <code>calculate_future_cost</code> (สไลด์ 7) ไปแปะไว้<b>บนสุด</b> แล้วพิมพ์โค้ดนี้ไว้<b>ล่างสุด</b>
+      </p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">app.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. ทำการคำนวณ ---</span><br>
+future_cost = calculate_future_cost(pv, inf_rate, years)<br>
+monthly_savings = future_cost / (years * <span class="c-number">12</span>) <span class="c-comment"># หารด้วยจำนวนเดือน</span><br>
+<br>
+<span class="c-comment"># --- 4. โชว์ผลลัพธ์ด้วยตัวเลขใหญ่ๆ ---</span><br>
+st.divider() <span class="c-comment"># ขีดเส้นคั่น</span><br>
+st.subheader(<span class="c-string">f"สรุปเป้าหมาย: {goal_name}"</span>)<br>
+<br>
+st.metric(<span class="c-string">"มูลค่าที่ต้องจ่ายในอนาคต (รวมเงินเฟ้อ)"</span>, <span class="c-string">f"฿{future_cost:,.2f}"</span>)<br>
+st.metric(<span class="c-string">"ถ้าเก็บเงินเฉยๆ (ไม่ลงทุน) ต้องเก็บเดือนละ"</span>, <span class="c-string">f"฿{monthly_savings:,.2f}"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12: BUILD - Dashboard Result (Mockup) -->
+  <div class="slide-container" id="slide12">
+    <div class="bg-symbol text-teal" style="top: -50px; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#FAFFF8; color:#75CF20; border: 2px solid #75CF20;">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ผลลัพธ์: Goal Calculator Dashboard</h2>
+      <p style="font-size:24px; margin-bottom:20px;">เมื่อรันโค้ดเสร็จ นี่คือหน้าตา Web App ที่แสดงบนเบราว์เซอร์ของคุณ!</p>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; flex-grow: 1; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden;">
+          <!-- Browser Header -->
+          <div style="background: #F3F4F6; padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #FA595D;"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #FFCD00;"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #75CF20;"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <!-- Streamlit App Content -->
+          <div style="padding: 32px; font-family: 'Inter', 'Sarabun', sans-serif; display: flex; flex-direction: column;">
+              <h1 style="font-size: 36px; margin-bottom: 8px; color:#1F2937;">🎯 Goal Calculator</h1>
+              <p style="font-size: 18px; color: #4B5563; margin-bottom: 24px;">คำนวณเป้าหมาย สู้เงินเฟ้อ!</p>
+
+              <div style="display: flex; gap: 40px; margin-bottom: 24px;">
+                  <!-- Col 1 -->
+                  <div style="flex: 1;">
+                      <h3 style="font-size: 20px; margin-bottom: 16px; color:#1F2937; font-weight: 600;">เป้าหมายของคุณ</h3>
+                      <div style="margin-bottom: 16px;">
+                          <label style="display:block; font-size: 14px; color: #4B5563; margin-bottom: 6px;">ชื่อเป้าหมาย</label>
+                          <div style="background: #F9FAFB; border: 1px solid #D1D5DB; padding: 8px 12px; border-radius: 6px; font-size: 16px;">รถยนต์คันแรก</div>
+                      </div>
+                      <div style="margin-bottom: 16px;">
+                          <label style="display:block; font-size: 14px; color: #4B5563; margin-bottom: 6px;">ราคาปัจจุบัน (บาท)</label>
+                          <div style="background: #F9FAFB; border: 1px solid #D1D5DB; padding: 8px 12px; border-radius: 6px; font-size: 16px;">1000000</div>
+                      </div>
+                      <div style="margin-bottom: 16px;">
+                          <label style="display:block; font-size: 14px; color: #4B5563; margin-bottom: 6px;">ระยะเวลา (ปี)</label>
+                          <div style="display:flex; align-items:center; gap:12px;">
+                              <div style="flex-grow:1; height: 6px; background: #E5E7EB; border-radius: 3px; position: relative;">
+                                  <div style="position: absolute; left: 0; top: 0; height: 100%; width: 25%; background: #FF4B4B; border-radius: 3px;"></div>
+                                  <div style="position: absolute; left: 25%; top: -6px; width: 18px; height: 18px; background: #FFFFFF; border: 2px solid #FF4B4B; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                              </div>
+                              <div style="font-size: 14px; color: #4B5563; background:#F3F4F6; padding: 4px 8px; border-radius:4px;">10</div>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Col 2 -->
+                  <div style="flex: 1;">
+                      <h3 style="font-size: 20px; margin-bottom: 16px; color:#1F2937; font-weight: 600;">สมมติฐานเศรษฐกิจ</h3>
+                      <div style="margin-bottom: 16px;">
+                          <label style="display:block; font-size: 14px; color: #4B5563; margin-bottom: 6px;">เงินเฟ้อคาดการณ์ (%)</label>
+                          <div style="background: #F9FAFB; border: 1px solid #D1D5DB; padding: 8px 12px; border-radius: 6px; font-size: 16px;">3.0</div>
+                      </div>
+                  </div>
+              </div>
+
+              <hr style="border: 0; border-top: 2px solid #E5E7EB; margin-bottom: 24px;">
+
+              <h3 style="font-size: 20px; margin-bottom: 16px; color:#1F2937; font-weight: 600;">สรุปเป้าหมาย: รถยนต์คันแรก</h3>
+              <div style="display: flex; gap: 24px;">
+                  <div style="flex: 1;">
+                      <label style="display:block; font-size: 14px; color: #4B5563; margin-bottom: 4px;">มูลค่าที่ต้องจ่ายในอนาคต (รวมเงินเฟ้อ)</label>
+                      <div style="font-size: 32px; font-weight: 700; color: #1F2937;">฿1,343,916.38</div>
+                  </div>
+                  <div style="flex: 1;">
+                      <label style="display:block; font-size: 14px; color: #4B5563; margin-bottom: 4px;">ถ้าเก็บเงินเฉยๆ (ไม่ลงทุน) ต้องเก็บเดือนละ</label>
+                      <div style="font-size: 32px; font-weight: 700; color: #1F2937;">฿11,199.30</div>
+                  </div>
+              </div>
+
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13: DEFEND - Trade-offs -->
+  <div class="slide-container" id="slide13">
+    <div class="bg-symbol text-red" style="bottom: 50px; right: -50px;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:#F3F4F6; color:#51545F; border: 2px solid #51545F;">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">วิเคราะห์ข้อจำกัด (Trade-offs)</h2>
+      <p style="font-size:28px; margin-bottom:24px;">ลองเปลี่ยนตัวเลขในหน้า Dashboard ของตัวเอง แล้วตอบคำถาม:</p>
+      
+      <div style="background:#FFFFFF; border-left: 8px solid #51545F; border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); flex-grow:1;">
+        <ol style="font-size: 28px; line-height: 1.6; margin-left:32px;">
+            <li style="margin-bottom:24px;">
+                ถ้าเงินเฟ้อไม่ใช่ 3% แต่พุ่งเป็น <strong class="text-red">5%</strong> จะเกิดอะไรขึ้นกับเป้าหมายของเรา?
+            </li>
+            <li>
+                ถ้า "เงินที่ต้องเก็บต่อเดือน" <b>สูงจนเราจ่ายไม่ไหว</b> เรามีทางเลือกอะไรบ้าง?
+                <ul style="font-size: 24px; color: #6B7280; margin-top:12px; margin-left:32px; list-style-type:square;">
+                    <li style="margin-bottom:8px;">ลดสเปกของลง? (ลด PV เป้าหมาย)</li>
+                    <li style="margin-bottom:8px;">ขยายเวลาเก็บเงินออกไป? (เพิ่ม Years)</li>
+                    <li style="color:#00C4BA; font-weight:bold;">
+                        <i class="fa-solid fa-arrow-trend-up"></i> เอาเงินเก็บไปลงทุนให้ชนะเงินเฟ้อ? (รอเรียนบทถัดไป!)
+                    </li>
+                </ul>
+            </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 14: EXIT -->
+  <div class="slide-container" id="slide14">
+    <div class="bg-symbol text-yellow" style="top: -50px; left: -50px;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:#FAF6F0; color:#FCAC17; border: 2px solid #FCAC17; align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:40px; text-align:center;">The Rule of 72 & Takeaway</h2>
+      
+      <div style="background:#00C4BA; color:white; border-radius:20px; padding:32px; margin-bottom:40px; box-shadow: 0 10px 25px rgba(0, 196, 186, 0.3); width:100%; max-width:900px;">
+        <h3 style="color:white; font-size:36px; margin-bottom:20px;">
+            <i class="fa-solid fa-lightbulb text-yellow"></i> กฎเลข 72 (Rule of 72)
+        </h3>
+        <p style="font-size:28px; line-height:1.6;">
+            วิธีคิดเลขในใจเร็วๆ ว่าเมื่อไหร่ของจะราคาแพงเป็น 2 เท่า<br>
+            <span style="background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:8px; display:inline-block; margin-top:12px; font-weight:bold;">
+                สูตร: $72 \div \text{อัตราเงินเฟ้อ}$ = จำนวนปี
+            </span><br>
+            เช่น เงินเฟ้อ 3% &rarr; 72 &divide; 3 = <b>24 ปี</b> ของจะราคาขึ้นเป็น 2 เท่า!
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:24px; border: 4px dashed #FA595D; border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 30px; font-weight: 700; color: #FA595D; margin:0; line-height:1.5;">
+            "เวลา (Time) คือสินทรัพย์ที่มีค่าที่สุดในการสร้างความมั่งคั่ง<br>และเป็นศัตรูตัวร้ายที่สุด หากเราปล่อยให้เงินเฟ้อกัดกิน"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

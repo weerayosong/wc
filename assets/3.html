@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 3: Understand Investments</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script>
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+        --bsd-dark: #51545F;
+        --bsd-teal: #00C4BA;
+        --bsd-yellow: #FFCD00;
+        --bsd-red: #FA595D;
+        --bsd-green: #75CF20;
+        --bsd-orange: #FCAC17;
+        --bg-soft-teal: #EFF9F8;
+        --bg-soft-yellow: #FEFAF1;
+        --bg-soft-red: #FFF7F8;
+        --bg-soft-green: #FAFFF8;
+        --bg-soft-orange: #FAF6F0;
+        --bg-soft-gray: #F3F4F6;
+    }
+
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Sarabun', 'Inter', sans-serif; 
+        background: var(--bsd-dark); 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: var(--bsd-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Quicksand', 'Sarabun', sans-serif; 
+        font-weight: 700; 
+        color: var(--bsd-dark); 
+        margin: 0; 
+        line-height: 1.2; 
+    }
+    p { line-height: 1.5; }
+    
+    /* Text Colors */
+    .text-slate { color: var(--bsd-dark); }
+    .text-teal { color: var(--bsd-teal); }
+    .text-yellow { color: var(--bsd-yellow); }
+    .text-red { color: var(--bsd-red); }
+    .text-green { color: var(--bsd-green); }
+    .text-orange { color: var(--bsd-orange); }
+
+    .watermark {
+        position: absolute;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        opacity: 0.05; 
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+    
+    .wm-1 { top: -50px; left: -50px; font-size: 350px; color: var(--bsd-teal); }
+    .wm-2 { bottom: -100px; right: -50px; font-size: 400px; color: var(--bsd-yellow); }
+    .wm-3 { top: -50px; right: 50px; font-size: 300px; color: var(--bsd-red); }
+    .wm-4 { bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-green); }
+    
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 64px;
+    }
+
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 12px;
+        align-self: flex-start;
+    }
+
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: var(--bsd-red); }
+    .dot-yellow { background: var(--bsd-yellow); }
+    .dot-green { background: var(--bsd-green); }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 16px 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; 
+    }
+    
+    /* Code Syntax Highlighting */
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: var(--bsd-red); font-weight: 600; }
+    .c-func { color: var(--bsd-teal); }
+    .c-string { color: var(--bsd-yellow); }
+    .c-number { color: var(--bsd-green); }
+    .c-method { color: var(--bsd-teal); }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <div class="slide-container" id="slide1" style="border-top: 16px solid var(--bsd-teal);">
+    <div class="watermark wm-1">&lt;/&gt;</div>
+    <div class="watermark wm-2">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:var(--bg-soft-teal); color:var(--bsd-teal); padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px; font-family:'Quicksand', sans-serif;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 3: Understand Investments<br><span class="text-teal">โลกของการลงทุนและสินทรัพย์</span>
+      </h1>
+      <p style="font-size:32px; color:var(--bsd-dark); max-width:900px; font-weight:700;">
+        "ให้เงินทำงานแทนเรา ผ่านพลังของสินทรัพย์และการลงทุน"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้ประเภทของสินทรัพย์ ผลตอบแทน ค่าธรรมเนียม และการทำ Normalization เพื่อเปรียบเทียบข้อมูลด้วย Pandas
+      </p>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide2">
+    <div class="watermark wm-3">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-red); border-left: 8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-red); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">ฝากแบงก์ VS ลงทุนหุ้น</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); border-left: 8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-yellow); color:var(--bsd-dark); padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">Asset Classes & Return</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); border-left: 8px solid var(--bsd-teal); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-teal); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">คณิตศาสตร์ของการปรับฐาน (Normalization)</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-green); border-left: 8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-green); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Asset Comparison Tool</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-gray); border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-dark); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">วิเคราะห์ค่าธรรมเนียมและสภาพคล่อง</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); border-left: 8px solid var(--bsd-orange); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-orange); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">No Free Lunch (ไม่มีของฟรีในโลกการเงิน)</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide3">
+    <div class="watermark" style="bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-dark);">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-red); color:var(--bsd-red); border: 2px solid var(--bsd-red);">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ทางแยกของ "เงินเก็บ 1 แสนบาท"</h2>
+      
+      <div style="display:flex; gap:32px; flex-grow:1; align-items:center; margin-top:16px;">
+        <div style="flex:1; background:var(--bg-soft-gray); border-radius:16px; padding:32px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+          <i class="fa-solid fa-piggy-bank text-slate" style="font-size:80px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">นาย A ฝากออมทรัพย์</h3>
+          <p style="font-size:24px; color:var(--bsd-dark);">ดอกเบี้ย 0.5% ต่อปี</p>
+          <div style="background:#FFFFFF; padding:12px; border-radius:8px; margin-top:16px; font-weight:bold; color:var(--bsd-dark); width:100%;">
+            10 ปีผ่านไป ได้เงิน: 105,114 บาท
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:center; align-items:center; font-size: 32px; font-weight: bold; color: #94A3B8;">VS</div>
+        
+        <div style="flex:1; background:var(--bg-soft-green); border-radius:16px; padding:32px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+          <i class="fa-solid fa-chart-line text-green" style="font-size:80px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">นาย B ซื้อหุ้นระดับโลก</h3>
+          <p style="font-size:24px; color:var(--bsd-dark);">ผลตอบแทน 8% ต่อปี</p>
+          <div style="background:#FFFFFF; padding:12px; border-radius:8px; margin-top:16px; font-weight:bold; color:var(--bsd-green); border: 2px solid var(--bsd-green); width:100%;">
+            10 ปีผ่านไป ได้เงิน: 215,892 บาท
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:var(--bsd-red); color:white; padding:20px; border-radius:12px; text-align:center; margin-top:24px;">
+        <h3 style="color:white; font-size:32px; margin:0;"><i class="fa-solid fa-circle-question" style="margin-right:12px;"></i>คำถาม: ถ้าหุ้นดีขนาดนี้ ทำไมทุกคนถึงไม่เอาเงินทั้งหมดไปซื้อหุ้นให้หมด?</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide4">
+    <div class="watermark wm-3">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:44px; margin-bottom:16px;">โลกของสินทรัพย์ <span class="text-teal">(Asset Classes)</span></h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-gray); padding:24px; border-radius:16px; border-left: 8px solid #94A3B8;">
+          <h3 style="font-size:28px; margin-bottom:12px; color:var(--bsd-dark);"><i class="fa-solid fa-money-bill-wave" style="margin-right:12px;"></i>เงินสด (Cash)</h3>
+          <p style="font-size:20px; color:#6B7280; margin-bottom:12px;">ฝากธนาคาร ถอนง่ายที่สุด แต่ผลตอบแทนต่ำมาก แพ้เงินเฟ้อ</p>
+          <span style="background:white; padding:4px 12px; border-radius:4px; font-size:16px; color:#94A3B8;">ความเสี่ยง: ต่ำมาก</span>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); padding:24px; border-radius:16px; border-left: 8px solid var(--bsd-teal);">
+          <h3 style="font-size:28px; margin-bottom:12px; color:var(--bsd-teal);"><i class="fa-solid fa-file-contract" style="margin-right:12px;"></i>พันธบัตร (Bonds)</h3>
+          <p style="font-size:20px; color:#6B7280; margin-bottom:12px;">เราเป็น "เจ้าหนี้" ปล่อยกู้ให้รัฐบาลหรือบริษัท ได้ดอกเบี้ยสม่ำเสมอ</p>
+          <span style="background:white; padding:4px 12px; border-radius:4px; font-size:16px; color:var(--bsd-teal);">ความเสี่ยง: ต่ำ-ปานกลาง</span>
+        </div>
+
+        <div style="background:var(--bg-soft-green); padding:24px; border-radius:16px; border-left: 8px solid var(--bsd-green);">
+          <h3 style="font-size:28px; margin-bottom:12px; color:var(--bsd-green);"><i class="fa-solid fa-chart-pie" style="margin-right:12px;"></i>หุ้น (Stocks / Equities)</h3>
+          <p style="font-size:20px; color:#6B7280; margin-bottom:12px;">เราเป็น "เจ้าของกิจการ" ได้เงินปันผลและกำไรจากราคาที่สูงขึ้น</p>
+          <span style="background:white; padding:4px 12px; border-radius:4px; font-size:16px; color:var(--bsd-green);">ความเสี่ยง: สูง</span>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); padding:24px; border-radius:16px; border-left: 8px solid var(--bsd-yellow);">
+          <h3 style="font-size:28px; margin-bottom:12px; color:var(--bsd-orange);"><i class="fa-brands fa-bitcoin" style="margin-right:12px;"></i>สินทรัพย์ทางเลือก (Alternative)</h3>
+          <p style="font-size:20px; color:#6B7280; margin-bottom:12px;">เช่น ทองคำ, คริปโต หรืออสังหาฯ ราคาผันผวนตามอุปสงค์และอุปทาน</p>
+          <span style="background:white; padding:4px 12px; border-radius:4px; font-size:16px; color:var(--bsd-orange);">ความเสี่ยง: สูงมาก</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide5">
+    <div class="watermark wm-4">&amp;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">เปรียบเทียบของที่ราคาไม่เท่ากัน</h2>
+      <p style="font-size:24px; margin-bottom:24px;">ถ้าหุ้น A ราคา 500 บาท ส่วนหุ้น B ราคา 10 บาท เราจะวาดกราฟเทียบกันได้อย่างไรว่าใครเติบโตดีกว่ากัน?</p>
+      
+      <div style="background:var(--bg-soft-teal); border:4px solid var(--bsd-teal); border-radius:20px; padding:24px; display:flex; flex-direction:column; align-items:center;">
+        <p style="font-size:24px; font-weight:700; color:var(--bsd-teal); margin-bottom:12px;">
+            <i class="fa-solid fa-ruler" style="margin-right:8px;"></i> วิธีแก้: การทำ Normalization (ปรับฐานให้เริ่มที่ 100)
+        </p>
+        
+        <div style="font-size:40px; margin-bottom:16px; background:white; padding:16px 40px; border-radius:12px; border: 2px dashed var(--bsd-teal);">
+          $$ Normalized Value = \left( \frac{Current Price}{Base Price} \right) \times 100 $$
+        </div>
+        
+        <div style="display:flex; gap:16px; width:100%;">
+          <div style="flex:1; background:white; padding:16px; border-radius:12px;">
+            <strong class="text-teal">Base Price:</strong> ราคาในวันแรกสุดที่เราเริ่มลงทุน
+          </div>
+          <div style="flex:1; background:white; padding:16px; border-radius:12px;">
+            <strong class="text-teal">ผลลัพธ์:</strong> ถ้าค่าออกมา 120 แปลว่าเราได้กำไร 20%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide6">
+    <div class="watermark wm-1" style="left: auto; right: -50px; top: 50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-teal); color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">CODE ALONG</div>
+      <h2 style="font-size:44px; margin-bottom:16px;">คณิตศาสตร์ของการปรับฐานใน Python</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>lesson3_intro.py</code> และลองใช้ Pandas คำนวณแบบง่ายๆ</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson3_intro.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+<span class="c-comment"># จำลองราคาหุ้น Apple ในระยะเวลา 3 ปี</span><br>
+prices = [<span class="c-number">150.0</span>, <span class="c-number">165.0</span>, <span class="c-number">180.0</span>]<br>
+<br>
+<span class="c-comment"># แปลงเป็นตาราง Pandas</span><br>
+df = pd.DataFrame({<span class="c-string">"AAPL_Price"</span>: prices})<br>
+<br>
+<span class="c-comment"># ดึงราคาตั้งต้น (บรรทัดแรกสุด Index ที่ 0)</span><br>
+base_price = df[<span class="c-string">"AAPL_Price"</span>].<span class="c-method">iloc</span>[<span class="c-number">0</span>]<br>
+<br>
+<span class="c-comment"># นำราคาปัจจุบัน หาร ราคาตั้งต้น คูณ 100</span><br>
+df[<span class="c-string">"Normalized"</span>] = (df[<span class="c-string">"AAPL_Price"</span>] / base_price) * <span class="c-number">100</span><br>
+<span class="c-func">print</span>(df)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide7">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 1/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เริ่มสร้าง Asset Comparison Tool</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>asset_tool.py</code> และจำลองข้อมูลราคาสินทรัพย์ 3 ประเภท (หุ้น, พันธบัตร, ทองคำ)</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">asset_tool.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+st.set_page_config(layout=<span class="c-string">"wide"</span>)<br>
+st.title(<span class="c-string">"📈 Asset Comparison Tool"</span>)<br>
+st.write(<span class="c-string">"เปรียบเทียบการเติบโตของสินทรัพย์ ด้วยการปรับฐาน 100 (Normalization)"</span>)<br>
+<br>
+<span class="c-comment"># --- 1. เตรียมข้อมูลจำลอง (Mock Data) 5 ปี ---</span><br>
+data = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Year"</span>: [<span class="c-number">2020</span>, <span class="c-number">2021</span>, <span class="c-number">2022</span>, <span class="c-number">2023</span>, <span class="c-number">2024</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Stock (S&P500)"</span>: [<span class="c-number">3000</span>, <span class="c-number">4000</span>, <span class="c-number">3800</span>, <span class="c-number">4500</span>, <span class="c-number">5000</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Bond (US Treasuries)"</span>: [<span class="c-number">100</span>, <span class="c-number">102</span>, <span class="c-number">95</span>, <span class="c-number">105</span>, <span class="c-number">110</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Gold"</span>: [<span class="c-number">1500</span>, <span class="c-number">1800</span>, <span class="c-number">1750</span>, <span class="c-number">1950</span>, <span class="c-number">2000</span>]<br>
+}<br>
+df = pd.DataFrame(data).<span class="c-method">set_index</span>(<span class="c-string">"Year"</span>) <span class="c-comment"># ตั้งปีเป็นแกน X</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide8">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 2/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">ปรับฐานข้อมูลให้เริ่มที่ 100 ทุกตัว</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดด้านล่างต่อ: นี่คือพลังของ Pandas เราสามารถคำนวณทั้งตารางได้ในบรรทัดเดียว!</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">asset_tool.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 2. คำนวณ Normalization ---</span><br>
+<span class="c-comment"># df.iloc[0] คือการดึงข้อมูล "บรรทัดแรกสุด" (ปี 2020) ของทุกคอลัมน์มาเป็นตัวหาร</span><br>
+df_normalized = (df / df.<span class="c-method">iloc</span>[<span class="c-number">0</span>]) * <span class="c-number">100</span><br>
+<br>
+<span class="c-comment"># คำนวณผลตอบแทนรวม (Total Return) จากค่าบรรทัดสุดท้าย หักด้วย 100</span><br>
+stock_return = df_normalized[<span class="c-string">"Stock (S&P500)"</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>] - <span class="c-number">100</span><br>
+bond_return = df_normalized[<span class="c-string">"Bond (US Treasuries)"</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>] - <span class="c-number">100</span><br>
+gold_return = df_normalized[<span class="c-string">"Gold"</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>] - <span class="c-number">100</span>
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-teal); border-left: 6px solid var(--bsd-teal); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 20px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-code text-teal" style="margin-right:8px;"></i> <b>Syntax Explanation:</b> <code>iloc[0]</code> หมายถึงดึงข้อมูลแถวบนสุด (เริ่มต้น) ส่วน <code>iloc[-1]</code> หมายถึงดึงข้อมูลแถวล่างสุด (ล่าสุด)
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide9">
+    <div class="watermark wm-1" style="top: auto; bottom: -50px; left: auto; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 3/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">โชว์ผลลัพธ์เป็นตัวเลข (Metrics)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดด้านล่างต่อ: แบ่งหน้าจอเป็น 3 คอลัมน์ และโชว์ผลตอบแทนสะสมของแต่ละสินทรัพย์</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">asset_tool.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. สร้าง User Interface ---</span><br>
+st.subheader(<span class="c-string">"📊 ผลตอบแทนสะสม (5 ปี)"</span>)<br>
+<br>
+col1, col2, col3 = st.columns(<span class="c-number">3</span>)<br>
+<br>
+<span class="c-keyword">with</span> col1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"📈 หุ้น (Stocks)"</span>, <span class="c-string">f"{stock_return:.2f}%"</span>)<br>
+<span class="c-keyword">with</span> col2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"🏛️ พันธบัตร (Bonds)"</span>, <span class="c-string">f"{bond_return:.2f}%"</span>)<br>
+<span class="c-keyword">with</span> col3:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"⛏️ ทองคำ (Gold)"</span>, <span class="c-string">f"{gold_return:.2f}%"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide10">
+    <div class="watermark" style="top: -50px; right: 150px; font-size: 300px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 4/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">วาดกราฟเปรียบเทียบ (Line Chart)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดชุดสุดท้าย: นำตาราง <code>df_normalized</code> ที่เราคำนวณไว้ มาโยนใส่กราฟเส้นของ Streamlit</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">asset_tool.py (cont.)</div>
+        </div>
+        <div class="code-body">
+st.divider()<br>
+st.subheader(<span class="c-string">"📈 กราฟเปรียบเทียบการเติบโต (ฐาน 100)"</span>)<br>
+<br>
+<span class="c-comment"># Streamlit จะดึงข้อมูลคอลัมน์ทั้งหมดไปวาดเป็นเส้นคนละสีให้โดยอัตโนมัติ</span><br>
+st.line_chart(df_normalized)<br>
+<br>
+st.info(<span class="c-string">"💡 <b>ข้อสังเกต:</b> สินทรัพย์ที่ให้ผลตอบแทนสูง มักจะมีความผันผวน (ขึ้นลงรุนแรง) ในระหว่างทางมากกว่าเสมอ!"</span>)<br>
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-teal); border-left: 6px solid var(--bsd-teal); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 22px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-play text-teal" style="margin-right:8px;"></i> <b>พร้อมแล้ว:</b> ไปที่ Terminal พิมพ์ <code>streamlit run asset_tool.py</code> ได้เลย!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide11">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลลัพธ์: Asset Comparison Tool</h2>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; height: 480px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden; margin-top: 10px;">
+          <!-- Browser Header -->
+          <div style="background: var(--bg-soft-gray); padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-red);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-yellow);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-green);"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <!-- Streamlit App Content -->
+          <div style="padding: 24px; font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; overflow-y:hidden;">
+              <h1 style="font-size: 28px; margin-bottom: 4px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📈 Asset Comparison Tool</h1>
+              <p style="font-size:14px; color:#6B7280; margin-bottom:16px;">เปรียบเทียบการเติบโตของสินทรัพย์ ด้วยการปรับฐาน 100 (Normalization)</p>
+              
+              <h2 style="font-size: 20px; margin-bottom: 12px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📊 ผลตอบแทนสะสม (5 ปี)</h2>
+              
+              <div style="display: flex; gap: 24px; margin-bottom: 16px;">
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">📈 หุ้น (Stocks)</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">66.67%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">🏛️ พันธบัตร (Bonds)</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">10.00%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">⛏️ ทองคำ (Gold)</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">33.33%</div>
+                  </div>
+              </div>
+
+              <hr style="border: 0; border-top: 1px solid #E5E7EB; margin-bottom: 16px;">
+
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <h2 style="font-size: 20px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📈 กราฟเปรียบเทียบการเติบโต (ฐาน 100)</h2>
+                  <div style="font-size: 12px; color: #9CA3AF;"><i class="fa-solid fa-chart-area" style="font-size:32px;"></i> (พื้นที่สำหรับกราฟเส้น Streamlit)</div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide12">
+    <div class="watermark wm-3" style="bottom: 50px; right: -50px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-gray); color:var(--bsd-dark); border: 2px solid var(--bsd-dark);">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">ตัวแปรที่มองไม่เห็นบนกราฟ</h2>
+      <p style="font-size:24px; margin-bottom:24px;">เห็นผลตอบแทนหุ้นดีที่สุด แต่มี 2 เรื่องสำคัญที่นักลงทุนมือใหม่มักมองข้าม:</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-red); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-red);"><i class="fa-solid fa-file-invoice-dollar" style="margin-right:12px;"></i>ค่าธรรมเนียม (Fees)</h3>
+            <p style="font-size:22px; color:#51545F; line-height:1.6; margin-bottom:12px;">
+                การซื้อขายหุ้นหรือกองทุนมักมีค่าธรรมเนียมแฝง (เช่น ค่าคอมมิชชัน, Management Fee)
+            </p>
+            <p style="font-size:22px; font-weight:bold; color:var(--bsd-dark);">
+                "ผลตอบแทน 10% ถ้าโดนหักค่าธรรมเนียม 2% ทุกปี ในระยะยาวเงินคุณจะหายไปมหาศาล"
+            </p>
+        </div>
+
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-teal); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-teal);"><i class="fa-solid fa-water" style="margin-right:12px;"></i>สภาพคล่อง (Liquidity)</h3>
+            <p style="font-size:22px; color:#51545F; line-height:1.6; margin-bottom:12px;">
+                ความเร็วในการเปลี่ยนสินทรัพย์กลับมาเป็น "เงินสด"
+            </p>
+            <ul style="font-size:22px; color:var(--bsd-dark); margin-left:24px;">
+                <li><strong>หุ้น:</strong> ขายแล้วได้เงินสดไว (สภาพคล่องสูง)</li>
+                <li><strong>อสังหาฯ:</strong> กว่าจะขายบ้านได้อาจใช้เวลาเป็นปี (สภาพคล่องต่ำ)</li>
+            </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide13">
+    <div class="watermark wm-2" style="top: -50px; left: -50px; right: auto; bottom: auto;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:var(--bg-soft-orange); color:var(--bsd-orange); border: 2px solid var(--bsd-orange); align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:32px; text-align:center;">No Free Lunch in Finance</h2>
+      
+      <div style="background:var(--bsd-dark); color:white; border-radius:20px; padding:40px; margin-bottom:32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); width:100%; max-width:900px; text-align:center;">
+        <h3 style="color:white; font-size:40px; margin-bottom:20px;">
+            "ไม่มีของฟรี ในโลกของการลงทุน"
+        </h3>
+        <p style="font-size:26px; line-height:1.6; font-weight:500; color:#E5E7EB;">
+            ผลตอบแทนที่สูงขึ้น <strong class="text-yellow">ย่อมแลกมาด้วยความเสี่ยงที่สูงขึ้นเสมอ</strong><br>
+            ความเสี่ยงในที่นี้หมายถึง "ความผันผวน" (Volatility)<br>ที่ราคาอาจร่วงลงไปติดลบอย่างรุนแรงในบางปี
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:20px; border: 4px dashed var(--bsd-teal); border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 26px; font-weight: 700; color: var(--bsd-teal); margin:0; line-height:1.5;">
+            "หน้าที่ของนักลงทุนที่ดี ไม่ใช่การหาของที่กำไรเยอะที่สุด<br>แต่คือการผสมสินทรัพย์ (Asset Allocation) ให้เหมาะกับความเสี่ยงที่ตัวเองรับได้"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

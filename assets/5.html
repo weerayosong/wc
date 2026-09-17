@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 5: Design a Portfolio</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script>
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+        --bsd-dark: #51545F;
+        --bsd-teal: #00C4BA;
+        --bsd-yellow: #FFCD00;
+        --bsd-red: #FA595D;
+        --bsd-green: #75CF20;
+        --bsd-orange: #FCAC17;
+        --bg-soft-teal: #EFF9F8;
+        --bg-soft-yellow: #FEFAF1;
+        --bg-soft-red: #FFF7F8;
+        --bg-soft-green: #FAFFF8;
+        --bg-soft-orange: #FAF6F0;
+        --bg-soft-gray: #F3F4F6;
+    }
+
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Sarabun', 'Inter', sans-serif; 
+        background: var(--bsd-dark); 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: var(--bsd-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Quicksand', 'Sarabun', sans-serif; 
+        font-weight: 700; 
+        color: var(--bsd-dark); 
+        margin: 0; 
+        line-height: 1.2; 
+    }
+    p { line-height: 1.5; }
+    
+    .text-slate { color: var(--bsd-dark); }
+    .text-teal { color: var(--bsd-teal); }
+    .text-yellow { color: var(--bsd-yellow); }
+    .text-red { color: var(--bsd-red); }
+    .text-green { color: var(--bsd-green); }
+    .text-orange { color: var(--bsd-orange); }
+
+    .watermark {
+        position: absolute;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        opacity: 0.05; 
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+    
+    .wm-1 { top: -50px; left: -50px; font-size: 350px; color: var(--bsd-teal); }
+    .wm-2 { bottom: -100px; right: -50px; font-size: 400px; color: var(--bsd-yellow); }
+    .wm-3 { top: -50px; right: 50px; font-size: 300px; color: var(--bsd-red); }
+    .wm-4 { bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-green); }
+    
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 64px;
+    }
+
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 12px;
+        align-self: flex-start;
+    }
+
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: var(--bsd-red); }
+    .dot-yellow { background: var(--bsd-yellow); }
+    .dot-green { background: var(--bsd-green); }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 16px 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; 
+    }
+    
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: var(--bsd-red); font-weight: 600; }
+    .c-func { color: var(--bsd-teal); }
+    .c-string { color: var(--bsd-yellow); }
+    .c-number { color: var(--bsd-green); }
+    .c-method { color: var(--bsd-teal); }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <div class="slide-container" id="slide1" style="border-top: 16px solid var(--bsd-teal);">
+    <div class="watermark wm-1">&lt;/&gt;</div>
+    <div class="watermark wm-2">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:var(--bg-soft-teal); color:var(--bsd-teal); padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px; font-family:'Quicksand', sans-serif;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 5: Design a Portfolio<br><span class="text-teal">ศาสตร์แห่งการผสมสินทรัพย์</span>
+      </h1>
+      <p style="font-size:32px; color:var(--bsd-dark); max-width:900px; font-weight:700;">
+        "อย่านำไข่ทุกใบ ไปใส่ไว้ในตะกร้าใบเดียวกัน"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้การจัดสรรเงินลงทุน (Asset Allocation) คำนวณผลตอบแทนถ่วงน้ำหนักด้วย Python เพื่อสร้างพอร์ตที่ทนทานต่อวิกฤต
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Agenda -->
+  <div class="slide-container" id="slide2">
+    <div class="watermark wm-3">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-red); border-left: 8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-red); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">พังเพราะหุ้นตัวเดียว (All-in Risk)</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); border-left: 8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-yellow); color:var(--bsd-dark); padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">Asset Allocation & Weighted Return</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); border-left: 8px solid var(--bsd-teal); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-teal); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">คณิตศาสตร์ของการผสมสัดส่วนน้ำหนัก</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-green); border-left: 8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-green); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Portfolio Simulator Dashboard</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-gray); border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-dark); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">ทำไมสัดส่วนพอร์ตถึงเบี้ยว? (Rebalancing)</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); border-left: 8px solid var(--bsd-orange); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-orange); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">The Holy Grail of Investing</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Case Study -->
+  <div class="slide-container" id="slide3">
+    <div class="watermark" style="bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-dark);">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-red); color:var(--bsd-red); border: 2px solid var(--bsd-red);">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">เดิมพันหมดหน้าตัก (All-in Risk)</h2>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; margin-top:16px;">
+        <div style="flex:1; background:var(--bg-soft-gray); border-radius:16px; padding:32px; display:flex; flex-direction:column;">
+          <div style="font-size:48px; margin-bottom:16px; color:var(--bsd-dark);"><i class="fa-solid fa-user-ninja"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px;">นาย A ซื้อหุ้น 100%</h3>
+          <p style="font-size:22px; color:#51545F; line-height:1.6;">
+            คาดหวังกำไรสูงสุด แต่เมื่อเกิดวิกฤต หุ้นตกลง -40%<br>
+            พอร์ตของเขา <strong>ติดลบ -40% เต็มๆ</strong> (ทนไม่ไหว ขายทิ้ง)
+          </p>
+        </div>
+        
+        <div style="flex:1; background:var(--bg-soft-teal); border-radius:16px; padding:32px; display:flex; flex-direction:column; border: 4px solid var(--bsd-teal);">
+          <div style="font-size:48px; margin-bottom:16px; color:var(--bsd-teal);"><i class="fa-solid fa-scale-balanced"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px;">นาย B ซื้อหุ้น 50% / พันธบัตร 50%</h3>
+          <p style="font-size:22px; color:#51545F; line-height:1.6;">
+            วิกฤตเดียวกัน หุ้นตก -40% แต่พันธบัตรบวก +5%<br>
+            พอร์ตของเขา <strong>ติดลบแค่ -17.5%</strong> (ยังพอนอนหลับสบาย)
+          </p>
+        </div>
+      </div>
+      
+      <div style="background:var(--bsd-teal); color:white; padding:20px; border-radius:12px; text-align:center; margin-top:24px;">
+        <h3 style="color:white; font-size:30px; margin:0;"><i class="fa-solid fa-shield-halved" style="margin-right:12px;"></i>การผสมสินทรัพย์ (Diversification) คือ "เสื้อเกราะกันกระสุน" ของนักลงทุน</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Concept Weighted Return -->
+  <div class="slide-container" id="slide4">
+    <div class="watermark wm-3">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลตอบแทนของพอร์ต <span class="text-teal">(Weighted Return)</span></h2>
+      <p style="font-size:24px; margin-bottom:24px;">พอร์ตจะเติบโตแค่ไหน ขึ้นอยู่กับ "สัดส่วนน้ำหนัก (Weight)" ที่เราแบ่งเงินไปซื้อสินทรัพย์นั้นๆ</p>
+      
+      <div style="background:var(--bg-soft-teal); border:4px solid var(--bsd-teal); border-radius:20px; padding:24px; display:flex; flex-direction:column; align-items:center;">
+        
+        <div style="font-size:40px; margin-bottom:16px; background:white; padding:16px 40px; border-radius:12px; border: 2px dashed var(--bsd-teal); font-family: 'Inter', sans-serif;">
+          $$ R_{port} = (W_{stock} \times R_{stock}) + (W_{bond} \times R_{bond}) $$
+        </div>
+        
+        <div style="display:flex; gap:16px; width:100%;">
+          <div style="flex:1; background:white; padding:16px; border-radius:12px;">
+            <strong class="text-teal" style="font-family:'Inter', sans-serif;">R (Return):</strong> ผลตอบแทนของสินทรัพย์
+          </div>
+          <div style="flex:1; background:white; padding:16px; border-radius:12px;">
+            <strong class="text-teal" style="font-family:'Inter', sans-serif;">W (Weight):</strong> สัดส่วนน้ำหนัก (รวมกันต้องได้ 1.0 หรือ 100%)
+          </div>
+        </div>
+        
+        <p style="font-size:22px; color:var(--bsd-dark); margin-top:20px; text-align:center;">
+            <b>ตัวอย่าง:</b> หุ้นกำไร 10% (ลงเงิน 60%) + พันธบัตรกำไร 2% (ลงเงิน 40%)<br>
+            พอร์ตจะได้กำไร = (0.60 * 10) + (0.40 * 2) = <b>6.8%</b>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Code Along -->
+  <div class="slide-container" id="slide5">
+    <div class="watermark wm-1" style="left: auto; right: -50px; top: 50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-teal); color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">CODE ALONG</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">คณิตศาสตร์ของการจัดพอร์ต (Python)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>lesson5_intro.py</code> เรามาลองเขียนสูตรถ่วงน้ำหนักด้วย Python กัน</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson5_intro.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># 1. กำหนดผลตอบแทน (Return) ของแต่ละสินทรัพย์</span><br>
+r_stock = <span class="c-number">10.0</span>  <span class="c-comment"># หุ้นกำไร 10%</span><br>
+r_bond = <span class="c-number">2.0</span>    <span class="c-comment"># พันธบัตรกำไร 2%</span><br>
+<br>
+<span class="c-comment"># 2. กำหนดสัดส่วนน้ำหนัก (Weight) ให้รวมกันได้ 1.0 เสมอ</span><br>
+w_stock = <span class="c-number">0.60</span>  <span class="c-comment"># ลงทุนหุ้น 60%</span><br>
+w_bond = <span class="c-number">1.0</span> - w_stock  <span class="c-comment"># ส่วนที่เหลือ 40% ให้พันธบัตร</span><br>
+<br>
+<span class="c-comment"># 3. คำนวณผลตอบแทนพอร์ตโดยรวม (Weighted Sum)</span><br>
+port_return = (w_stock * r_stock) + (w_bond * r_bond)<br>
+<span class="c-func">print</span>(<span class="c-string">f"ผลตอบแทนพอร์ต: {port_return:.2f}%"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Build Step 1 -->
+  <div class="slide-container" id="slide6">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 1/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เตรียมข้อมูลจำลองสำหรับ Dashboard</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>portfolio_sim.py</code> แล้วจำลองข้อมูลผลตอบแทนรายปี 5 ปี</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">portfolio_sim.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+st.set_page_config(layout=<span class="c-string">"wide"</span>)<br>
+st.title(<span class="c-string">"⚖️ Portfolio Simulator"</span>)<br>
+<br>
+<span class="c-comment"># --- 1. เตรียมข้อมูลผลตอบแทนรายปี (Yearly Return %) ---</span><br>
+<span class="c-comment"># สังเกตว่าหุ้นผันผวนสูง (มีบวกเยอะ มีติดลบหนัก) แต่พันธบัตรจะนิ่งๆ</span><br>
+data = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Year"</span>: [<span class="c-number">2020</span>, <span class="c-number">2021</span>, <span class="c-number">2022</span>, <span class="c-number">2023</span>, <span class="c-number">2024</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Stock_Return"</span>: [<span class="c-number">15.0</span>, <span class="c-number">20.0</span>, -<span class="c-number">18.0</span>, <span class="c-number">12.0</span>, <span class="c-number">25.0</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Bond_Return"</span>: [<span class="c-number">2.0</span>, <span class="c-number">1.5</span>, -<span class="c-number">5.0</span>, <span class="c-number">3.0</span>, <span class="c-number">4.0</span>]<br>
+}<br>
+df = pd.DataFrame(data).<span class="c-method">set_index</span>(<span class="c-string">"Year"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Build Step 2 -->
+  <div class="slide-container" id="slide7">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 2/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">สร้าง Slider รับค่าสัดส่วนน้ำหนัก</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: ให้ผู้ใช้งานเลื่อน Slider เพื่อเลือกน้ำหนักหุ้น (0-100%)</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">portfolio_sim.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 2. รับค่า Asset Allocation จากผู้ใช้ ---</span><br>
+st.subheader(<span class="c-string">"⚙️ ปรับสัดส่วนพอร์ต (Asset Allocation)"</span>)<br>
+<br>
+<span class="c-comment"># ใช้ slider รับค่า 0 ถึง 100 (ตั้งค่าเริ่มต้นที่ 60)</span><br>
+stock_pct = st.slider(<span class="c-string">"น้ำหนักหุ้น (Stocks %)"</span>, <span class="c-number">0</span>, <span class="c-number">100</span>, <span class="c-number">60</span>)<br>
+<br>
+<span class="c-comment"># คำนวณหาน้ำหนักของพันธบัตรอัตโนมัติ (และแปลงเป็นทศนิยมเพื่อใช้คูณ)</span><br>
+bond_pct = <span class="c-number">100</span> - stock_pct<br>
+w_stock = stock_pct / <span class="c-number">100</span><br>
+w_bond = bond_pct / <span class="c-number">100</span><br>
+<br>
+st.write(<span class="c-string">f"สัดส่วนปัจจุบัน: หุ้น **{stock_pct}%** | พันธบัตร **{bond_pct}%**"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Build Step 3 -->
+  <div class="slide-container" id="slide8">
+    <div class="watermark wm-1" style="top: auto; bottom: -50px; left: auto; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 3/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">คำนวณผลตอบแทนพอร์ตทั้ง 5 ปี</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: ใช้ Pandas สร้างคอลัมน์ใหม่ที่นำน้ำหนักไปคูณกับผลตอบแทน</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">portfolio_sim.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. คำนวณผลตอบแทนของพอร์ตในแต่ละปี ---</span><br>
+<span class="c-comment"># Pandas เก่งมาก! แค่พิมพ์บรรทัดเดียว มันจะคูณและบวกให้ทุกปีอัตโนมัติ</span><br>
+df[<span class="c-string">"Portfolio_Return"</span>] = (df[<span class="c-string">"Stock_Return"</span>] * w_stock) + (df[<span class="c-string">"Bond_Return"</span>] * w_bond)<br>
+<br>
+<span class="c-comment"># คำนวณสถิติเพื่อนำไปโชว์ (ค่าเฉลี่ยรายปี และความผันผวน)</span><br>
+avg_port_ret = df[<span class="c-string">"Portfolio_Return"</span>].<span class="c-method">mean()</span><br>
+vol_port = df[<span class="c-string">"Portfolio_Return"</span>].<span class="c-method">std()</span><br>
+<br>
+<span class="c-comment"># หาปีที่พอร์ตติดลบหนักที่สุด (Min Return) เพื่อจำลองเป็น Max Drawdown คร่าวๆ</span><br>
+worst_year = df[<span class="c-string">"Portfolio_Return"</span>].<span class="c-method">min()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Build Step 4 -->
+  <div class="slide-container" id="slide9">
+    <div class="watermark" style="top: -50px; right: 150px; font-size: 300px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 4/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">แสดงผลสถิติความเสี่ยง (Metrics)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: นำสถิติที่คำนวณไว้มาแสดงเป็นตัวเลขบนหน้า Dashboard</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">portfolio_sim.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 4. สร้าง UI แสดงผลสถิติ ---</span><br>
+st.divider()<br>
+st.subheader(<span class="c-string">"📊 สถิติของพอร์ตฟอลิโอ (เฉลี่ย 5 ปี)"</span>)<br>
+<br>
+c1, c2, c3 = st.columns(<span class="c-number">3</span>)<br>
+<br>
+<span class="c-keyword">with</span> c1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"📈 Average Yearly Return"</span>, <span class="c-string">f"{avg_port_ret:.2f}%"</span>)<br>
+<span class="c-keyword">with</span> c2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"🌪️ Volatility (ความผันผวน)"</span>, <span class="c-string">f"{vol_port:.2f}%"</span>)<br>
+<span class="c-keyword">with</span> c3:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"📉 Worst Year (ปีที่แย่ที่สุด)"</span>, <span class="c-string">f"{worst_year:.2f}%"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Build Step 5 -->
+  <div class="slide-container" id="slide10">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 5/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เปรียบเทียบกราฟ (Bar Chart)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดชุดสุดท้าย: นำข้อมูลรายปีมาพลอตกราฟแท่งเพื่อดูว่า พอร์ตของเราผันผวนน้อยกว่าหุ้นล้วนๆ จริงไหม?</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">portfolio_sim.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 5. วาดกราฟเปรียบเทียบ ---</span><br>
+st.subheader(<span class="c-string">"📈 ผลตอบแทนรายปี: พอร์ตผสม VS หุ้น 100%"</span>)<br>
+<br>
+<span class="c-comment"># เลือกเฉพาะคอลัมน์ที่ต้องการไปวาดกราฟแท่ง</span><br>
+st.bar_chart(df[[<span class="c-string">"Stock_Return"</span>, <span class="c-string">"Portfolio_Return"</span>]])<br>
+<br>
+<span class="c-comment"># โชว์ตารางข้อมูลดิบ</span><br>
+<span class="c-keyword">with</span> st.expander(<span class="c-string">"🔍 ดูข้อมูลตาราง"</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.dataframe(df, use_container_width=<span class="c-keyword">True</span>)
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-teal); border-left: 6px solid var(--bsd-teal); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 22px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-play text-teal" style="margin-right:8px;"></i> <b>พร้อมแล้ว:</b> ไปที่ Terminal พิมพ์ <code>streamlit run portfolio_sim.py</code> ได้เลย!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 11: Build Result -->
+  <div class="slide-container" id="slide11">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลลัพธ์: Portfolio Simulator</h2>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; height: 480px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden; margin-top: 10px;">
+          <!-- Browser Header -->
+          <div style="background: var(--bg-soft-gray); padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-red);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-yellow);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-green);"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <!-- Streamlit App Content -->
+          <div style="padding: 24px; font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; overflow-y:hidden;">
+              <h1 style="font-size: 28px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">⚖️ Portfolio Simulator</h1>
+              
+              <h2 style="font-size: 20px; margin-bottom: 8px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">⚙️ ปรับสัดส่วนพอร์ต (Asset Allocation)</h2>
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom: 8px;">
+                  <div style="font-size: 14px; color: #4B5563;">น้ำหนักหุ้น (Stocks %)</div>
+                  <div style="flex-grow:1; height: 4px; background: #E5E7EB; border-radius: 2px; position: relative;">
+                      <div style="position: absolute; left: 0; top: 0; height: 100%; width: 60%; background: #FF4B4B; border-radius: 2px;"></div>
+                      <div style="position: absolute; left: 60%; top: -6px; width: 16px; height: 16px; background: #FFFFFF; border: 2px solid #FF4B4B; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"></div>
+                  </div>
+                  <div style="font-size: 14px; color: #4B5563;">60</div>
+              </div>
+              <p style="font-size:14px; margin-bottom:16px;">สัดส่วนปัจจุบัน: หุ้น <strong>60%</strong> | พันธบัตร <strong>40%</strong></p>
+              
+              <hr style="border: 0; border-top: 1px solid #E5E7EB; margin-bottom: 16px;">
+
+              <h2 style="font-size: 20px; margin-bottom: 12px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📊 สถิติของพอร์ตฟอลิโอ (เฉลี่ย 5 ปี)</h2>
+              <div style="display: flex; gap: 24px; margin-bottom: 16px;">
+                  <div style="flex: 1; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">📈 Average Yearly Return</div>
+                      <div style="font-size: 24px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">9.60%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">🌪️ Volatility</div>
+                      <div style="font-size: 24px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">11.83%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 12px; color: #4B5563; margin-bottom: 4px;">📉 Worst Year</div>
+                      <div style="font-size: 24px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">-12.80%</div>
+                  </div>
+              </div>
+              
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <h2 style="font-size: 20px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📈 ผลตอบแทนรายปี: พอร์ตผสม VS หุ้น 100%</h2>
+                  <div style="font-size: 12px; color: #9CA3AF;"><i class="fa-solid fa-chart-column" style="font-size:24px;"></i></div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12: Defend - Rebalancing -->
+  <div class="slide-container" id="slide12">
+    <div class="watermark wm-3" style="bottom: 50px; right: -50px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-gray); color:var(--bsd-dark); border: 2px solid var(--bsd-dark);">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">สัดส่วนที่บิดเบี้ยวตามกาลเวลา</h2>
+      <p style="font-size:24px; margin-bottom:24px;">สมมติเราจัดพอร์ต <strong>หุ้น 50% : พันธบัตร 50%</strong> และปล่อยทิ้งไว้ 3 ปี...</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-red); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-red);"><i class="fa-solid fa-arrow-up-right-dots" style="margin-right:12px;"></i>ปีที่ 3 หุ้นขึ้นเอาๆ</h3>
+            <p style="font-size:22px; color:#51545F; line-height:1.6; margin-bottom:12px;">
+                มูลค่าหุ้นโตไวมาก จนสัดส่วนพอร์ตกลายเป็น <strong>หุ้น 70% : พันธบัตร 30%</strong> โดยที่เราไม่ได้ทำอะไรเลย
+            </p>
+            <p style="font-size:22px; font-weight:bold; color:var(--bsd-dark);">
+                ปัญหา: พอร์ตเรากำลังเสี่ยงกว่าที่ตั้งใจไว้! ถ้าปีที่ 4 หุ้นตกหนัก เราจะเจ็บหนัก
+            </p>
+        </div>
+
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-teal); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-teal);"><i class="fa-solid fa-rotate" style="margin-right:12px;"></i>การ Rebalancing</h3>
+            <p style="font-size:22px; color:#51545F; line-height:1.6; margin-bottom:12px;">
+                การ <strong>ปรับสมดุลพอร์ต</strong> ขายสิ่งที่กำไรเยอะ (หุ้น) ไปซื้อสิ่งที่ลดลง (พันธบัตร) เพื่อดึงสัดส่วนกลับมาที่ 50:50 ตามเดิม
+            </p>
+            <p style="font-size:22px; font-weight:bold; color:var(--bsd-teal);">
+                "ซื้อถูก ขายแพง อย่างเป็นระบบโดยอัตโนมัติ"
+            </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13: Exit -->
+  <div class="slide-container" id="slide13">
+    <div class="watermark wm-2" style="top: -50px; left: -50px; right: auto; bottom: auto;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:var(--bg-soft-orange); color:var(--bsd-orange); border: 2px solid var(--bsd-orange); align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:32px; text-align:center;">The Holy Grail of Investing</h2>
+      
+      <div style="background:var(--bsd-dark); color:white; border-radius:20px; padding:40px; margin-bottom:32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); width:100%; max-width:900px; text-align:center;">
+        <h3 style="color:white; font-size:36px; margin-bottom:20px;">
+            "จอกศักดิ์สิทธิ์ของการลงทุน"
+        </h3>
+        <p style="font-size:26px; line-height:1.6; font-weight:500; color:#E5E7EB;">
+            Ray Dalio ผู้จัดการกองทุนที่ใหญ่ที่สุดในโลก กล่าวไว้ว่า:<br>
+            กุญแจสำคัญคือการหา <strong class="text-yellow">สินทรัพย์ที่เคลื่อนไหวไม่พร้อมกัน 15-20 ตัว</strong><br>
+            มาผสมกัน มันจะช่วยลดความเสี่ยงลงได้เกือบ 80% โดยที่ผลตอบแทนไม่ลดลงเลย!
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:20px; border: 4px dashed var(--bsd-teal); border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 26px; font-weight: 700; color: var(--bsd-teal); margin:0; line-height:1.5;">
+            "ในบทต่อไป เราจะใช้ Python ตรวจสอบข้อมูลย้อนหลัง (Backtesting)<br>เพื่อพิสูจน์ว่ากลยุทธ์การลงทุนของเรา ใช้งานได้จริงในอดีตหรือไม่!"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

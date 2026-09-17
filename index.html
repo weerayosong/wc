@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wealth Code Curriculum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+<style>
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #F3F4F6;
+    color: #51545F;
+  }
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Quicksand', 'Sarabun', sans-serif;
+  }
+  .font-mono-code {
+    font-family: 'Inter', sans-serif;
+  }
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-[#00C4BA] rounded-lg flex items-center justify-center text-white text-xl">
+          <i class="fa-solid fa-code"></i>
+        </div>
+        <span class="font-heading font-bold text-2xl text-[#51545F]">BSD</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="ค้นหาบทเรียน..." class="bg-gray-100 border border-gray-200 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#00C4BA] focus:bg-white transition-all w-64 text-sm font-heading">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-gray-400"></i>
+        </div>
+        <a href="https://github.com/weerayosong/wc.git" target="_blank" class="text-gray-500 hover:text-[#51545F] transition-colors text-2xl">
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="bg-[#51545F] text-white py-20 relative overflow-hidden">
+  <div class="absolute top-[-50px] left-[-50px] text-[300px] text-white opacity-5 font-heading pointer-events-none select-none">&lt;/&gt;</div>
+  <div class="absolute bottom-[-100px] right-[-50px] text-[300px] text-white opacity-5 font-heading pointer-events-none select-none">#</div>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+    <div class="inline-block bg-[#EFF9F8] text-[#00C4BA] px-6 py-2 rounded-full font-heading font-bold tracking-widest mb-6 border border-[#00C4BA]">
+      CURRICULUM PORTAL
+    </div>
+    <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+      ออกแบบหลักสูตร <span class="text-[#00C4BA]">Wealth Code</span>
+    </h1>
+    <p class="text-md md:text-xl font-light text-gray-300 max-w-2xl mx-auto">- ปุ่ม View App สำหรับดูแอปที่นักเรียนจะได้สร้างขึ้นในแต่ละบท</p>
+    <p class="text-md md:text-xl font-light text-gray-300 max-w-2xl mx-auto">- ปุ่ม Lesson สำหรับดูสไลด์ที่นักเรียนจะได้เรียนการเงินและโค้ดดิ้งแต่ละบท</p>
+    <p class="text-md md:text-xl font-light text-gray-300 max-w-2xl mx-auto">- ปุ่ม Code สำหรับดูโค้ดที่นักเรียนจะได้สร้างขึ้นในแต่ละบท (40-85 บรรทัดโค้ด)</p>
+    <br>
+    <p class="text-md md:text-xl font-light text-gray-300 max-w-2xl mx-auto">- บทที่ 8 ที่เป็นส่วนชม.ต่อขยายยังไม่ได้ทำ (AI Implementation & Demo Day)</p>
+    <p class="text-md md:text-xl font-light text-gray-300 max-w-2xl mx-auto">- เนื้อหาหลักสูตร ถูกจัดสร้างตาม Official BSD Education Brief</p>
+    <p class="text-md md:text-xl font-light text-gray-300 max-w-2xl mx-auto">- เว็บไซต์นี้ สร้างเพื่อง่ายต่อการพรีวิวดูไพธอนและนำเสนอเท่านั้น ไม่ได้ใช้จริง</p>
+  </div>
+</header>
+
+<main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div id="lessonGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="asset tool py">
+      <div class="h-3 w-full bg-[#75CF20]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#FAFFF8] text-[#75CF20] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 0</span>
+          <i class="fa-brands fa-python text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Setup</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">พื้นฐานที่ควรมีก่อนเรียน</p>
+        <div class="space-y-3">
+          <a class="block w-full py-2 px-4 bg-[#51545F] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-ban"></i> ไม่มี
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/0.html" target="_blank" class="py-2 px-4 bg-[#FAFFF8] hover:bg-[#eaf7e1] text-[#75CF20] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#75CF20]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a class="py-2 px-4 bg-gray-100 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-solid fa-ban"></i> ไม่มี
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="introduction basics">
+      <div class="h-3 w-full bg-[#00C4BA]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#EFF9F8] text-[#00C4BA] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 1</span>
+          <i class="fa-solid fa-play text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Goal Calculator</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">รู้จักเงินเฟ้อ ลองฝึกสร้าง ui อย่างง่ายที่สุด</p>
+        <div class="space-y-3">
+          <a href="https://bd5qsx3erhrtjn6zx2rcb7.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/1.html" target="_blank" class="py-2 px-4 bg-[#EFF9F8] hover:bg-[#d5f2f0] text-[#00C4BA] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#00C4BA]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/app.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="data dashboard py">
+      <div class="h-3 w-full bg-[#FFCD00]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#FEFAF1] text-[#FCAC17] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 2</span>
+          <i class="fa-solid fa-chart-pie text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Data Dashboard</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">สร้างหน้าแดชบอร์ดสรุปข้อมูลทางการเงินที่เข้าใจง่าย</p>
+        <div class="space-y-3">
+          <a href="https://dashboardpy-kqtszjl9hwhbuedduoolbs.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/2.html" target="_blank" class="py-2 px-4 bg-[#FEFAF1] hover:bg-[#faeed5] text-[#FCAC17] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#FFCD00]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/dashboard.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="asset tool py">
+      <div class="h-3 w-full bg-[#75CF20]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#FAFFF8] text-[#75CF20] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 3</span>
+          <i class="fa-solid fa-coins text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Asset Analysis Tool</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">เครื่องมือวิเคราะห์และคัดกรองสินทรัพย์การลงทุน</p>
+        <div class="space-y-3">
+          <a href="https://assettoolpy-mdzucvxhoashocp5kvbea2.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/3.html" target="_blank" class="py-2 px-4 bg-[#FAFFF8] hover:bg-[#eaf7e1] text-[#75CF20] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#75CF20]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/asset_tool.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="market dashboard py">
+      <div class="h-3 w-full bg-[#FA595D]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#FFF7F8] text-[#FA595D] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 4</span>
+          <i class="fa-solid fa-globe text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Market Dashboard</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">ติดตามสภาวะตลาดแบบเรียลไทม์ผ่านแดชบอร์ด</p>
+        <div class="space-y-3">
+          <a href="https://marketdashpy-u4c3ztyetupnhwqwqkveeq.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/4.html" target="_blank" class="py-2 px-4 bg-[#FFF7F8] hover:bg-[#ffe1e3] text-[#FA595D] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#FA595D]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/market_dash.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="portfolio sim py">
+      <div class="h-3 w-full bg-[#FCAC17]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#FAF6F0] text-[#FCAC17] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 5</span>
+          <i class="fa-solid fa-wallet text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Portfolio Simulator</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">จำลองการจัดพอร์ตฟอลิโอและการปรับสมดุล (Rebalancing)</p>
+        <div class="space-y-3">
+          <a href="https://portfoliosimpy-7qhv2azjleavxvihnnnq8w.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/5.html" target="_blank" class="py-2 px-4 bg-[#FAF6F0] hover:bg-[#f3ead9] text-[#FCAC17] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#FCAC17]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/portfolio_sim.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="strategy dash py">
+      <div class="h-3 w-full bg-[#00C4BA]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#EFF9F8] text-[#00C4BA] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 6</span>
+          <i class="fa-solid fa-chess-knight text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Strategy Dashboard</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">ออกแบบและวัดผลกลยุทธ์การลงทุนตามหลักการ</p>
+        <div class="space-y-3">
+          <a href="https://strategydashpy-mfn2p2yebwxa5enzeiwebc.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/6.html" target="_blank" class="py-2 px-4 bg-[#EFF9F8] hover:bg-[#d5f2f0] text-[#00C4BA] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#00C4BA]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/strategy_dash.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-lg card-hover flex flex-col h-full relative" data-title="stress dash py break the strategy">
+      <div class="h-3 w-full bg-[#FA595D]"></div>
+      <div class="p-6 flex flex-col flex-grow bg-gradient-to-b from-white to-gray-50">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-[#FFF7F8] text-[#FA595D] text-xs font-bold px-3 py-1 rounded-full font-mono-code">บทที่ 7</span>
+          <i class="fa-solid fa-bolt text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">Break the Strategy</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">ทดสอบความเครียด (Stress Test) ประเมินความเสี่ยงเชิงลึกของกลยุทธ์</p>
+        <div class="space-y-3">
+          <a href="https://stressdashpy-dtxmxnrafkntjhyawf628b.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a href="assets/7.html" target="_blank" class="py-2 px-4 bg-[#FFF7F8] hover:bg-[#ffe1e3] text-[#FA595D] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-[#FA595D]">
+              <i class="fa-solid fa-book-open mr-1"></i> Lesson
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/strategy_dash.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card bg-white rounded-2xl overflow-hidden border border-gray-200 card-hover flex flex-col h-full" data-title="advanced final">
+      <div class="h-3 w-full bg-[#51545F]"></div>
+      <div class="p-6 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <span class="bg-gray-200 text-[#51545F] text-xs font-bold px-3 py-1 rounded-full font-mono-code">Minimum Viable Product (MVP)</span>
+          <i class="fa-solid fa-dollar text-gray-300 text-xl"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-2 text-[#51545F]">ความรู้ทั้ง7บท นำมาผสมกัน</h3>
+        <p class="text-gray-500 text-sm mb-6 flex-grow">แดชบอร์ดที่ทาง BSD คาดหวังว่านักเรียนจะสามารถสร้างได้เป็นอย่างน้อย หลังเรียน</p>
+        <div class="space-y-3">
+          <a href="https://96qf3wq6bvpvsyc2j48pz3.streamlit.app" target="_blank" class="block w-full py-2 px-4 bg-[#51545F] hover:bg-[#3d3f48] text-white text-center rounded-lg font-heading font-bold transition-colors">
+            <i class="fa-solid fa-rocket mr-2"></i> View App
+          </a>
+          <div class="grid grid-cols-2 gap-3">
+            <a  class="py-2 px-4 bg-gray-50 text-[#51545F] text-center rounded-lg font-heading font-bold transition-colors text-sm border border-gray-300">
+              <i class="fa-solid fa-ban"></i> ไม่มี
+            </a>
+            <a href="https://github.com/weerayosong/wc/blob/main/mvp.py" target="_blank" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-center rounded-lg font-heading font-bold transition-colors text-sm">
+              <i class="fa-brands fa-github mr-1"></i> Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="bg-white border-t border-gray-200 mt-auto py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 font-heading">
+    <p>&copy; 2026 BSD Education | Wealth Code Curriculum. All rights reserved.</p>
+    <div class="mt-4 space-x-4">
+      <a href="#" class="hover:text-[#00C4BA] transition-colors"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#" class="hover:text-[#00C4BA] transition-colors"><i class="fa-brands fa-youtube"></i></a>
+      <a href="#" class="hover:text-[#00C4BA] transition-colors"><i class="fa-brands fa-github"></i></a>
+    </div>
+    <span></span><small>ปุ่มโซเชียลหลอก ๆ ไม่ต้องกด ทำสวยไว้เฉย ๆ</small></div></span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('searchInput').addEventListener('keyup', function(e) {
+    const term = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.lesson-card');
+    cards.forEach(card => {
+      const title = card.getAttribute('data-title').toLowerCase();
+      if (title.includes(term)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

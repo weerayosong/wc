@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 6: Code an Investment Rule</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script>
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+        --bsd-dark: #51545F;
+        --bsd-teal: #00C4BA;
+        --bsd-yellow: #FFCD00;
+        --bsd-red: #FA595D;
+        --bsd-green: #75CF20;
+        --bsd-orange: #FCAC17;
+        --bg-soft-teal: #EFF9F8;
+        --bg-soft-yellow: #FEFAF1;
+        --bg-soft-red: #FFF7F8;
+        --bg-soft-green: #FAFFF8;
+        --bg-soft-orange: #FAF6F0;
+        --bg-soft-gray: #F3F4F6;
+    }
+
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Sarabun', 'Inter', sans-serif; 
+        background: var(--bsd-dark); 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: var(--bsd-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Quicksand', 'Sarabun', sans-serif; 
+        font-weight: 700; 
+        color: var(--bsd-dark); 
+        margin: 0; 
+        line-height: 1.2; 
+    }
+    p { line-height: 1.5; }
+    
+    .text-slate { color: var(--bsd-dark); }
+    .text-teal { color: var(--bsd-teal); }
+    .text-yellow { color: var(--bsd-yellow); }
+    .text-red { color: var(--bsd-red); }
+    .text-green { color: var(--bsd-green); }
+    .text-orange { color: var(--bsd-orange); }
+
+    .watermark {
+        position: absolute;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        opacity: 0.05; 
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+    
+    .wm-1 { top: -50px; left: -50px; font-size: 350px; color: var(--bsd-teal); }
+    .wm-2 { bottom: -100px; right: -50px; font-size: 400px; color: var(--bsd-yellow); }
+    .wm-3 { top: -50px; right: 50px; font-size: 300px; color: var(--bsd-red); }
+    .wm-4 { bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-green); }
+    
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 64px;
+    }
+
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 12px;
+        align-self: flex-start;
+    }
+
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: var(--bsd-red); }
+    .dot-yellow { background: var(--bsd-yellow); }
+    .dot-green { background: var(--bsd-green); }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 16px 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; 
+    }
+    
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: var(--bsd-red); font-weight: 600; }
+    .c-func { color: var(--bsd-teal); }
+    .c-string { color: var(--bsd-yellow); }
+    .c-number { color: var(--bsd-green); }
+    .c-method { color: var(--bsd-teal); }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1: Title -->
+  <div class="slide-container" id="slide1" style="border-top: 16px solid var(--bsd-teal);">
+    <div class="watermark wm-1">&lt;/&gt;</div>
+    <div class="watermark wm-2">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:var(--bg-soft-teal); color:var(--bsd-teal); padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px; font-family:'Quicksand', sans-serif;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 6: Code an Investment Rule<br><span class="text-teal">สร้างกฎและทดสอบกลยุทธ์</span>
+      </h1>
+      <p style="font-size:32px; color:var(--bsd-dark); max-width:900px; font-weight:700;">
+        "อย่าลงทุนด้วยความรู้สึก ให้ลงทุนด้วยกฎเกณฑ์และสถิติ"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้เทคนิค Backtesting จำลองการทำงานของ Moving Average<br>และสร้างตัวสร้างสัญญาณซื้อขาย (Signals) ด้วย Python
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Agenda -->
+  <div class="slide-container" id="slide2">
+    <div class="watermark wm-3">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-red); border-left: 8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-red); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">ซื้อด้วยอารมณ์ VS ซื้อด้วยกฎเกณฑ์</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); border-left: 8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-yellow); color:var(--bsd-dark); padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">เส้นค่าเฉลี่ย (SMA) & Backtesting</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); border-left: 8px solid var(--bsd-teal); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-teal); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">คำสั่ง Rolling & Numpy Where</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-green); border-left: 8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-green); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Strategy Backtest Engine</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-gray); border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-dark); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">กลยุทธ์นี้เวิร์คจริง หรือแค่ฟลุค?</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); border-left: 8px solid var(--bsd-orange); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-orange); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">กฎเหล็กของนักพัฒนา Quant</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Case Study -->
+  <div class="slide-container" id="slide3">
+    <div class="watermark" style="bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-dark);">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-red); color:var(--bsd-red); border: 2px solid var(--bsd-red);">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">เมื่อความรู้สึก.. ทำพอร์ตพัง</h2>
+      <p style="font-size:24px; margin-bottom:24px;">คุณเคยตัดสินใจผิดพลาดเรื่องเงิน เพราะความตกใจกลัว (Panic) หรือความโลภ (FOMO) ไหม?</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1;">
+        <div style="flex:1; background:var(--bg-soft-gray); border-radius:16px; padding:32px; display:flex; flex-direction:column; text-align:center; justify-content:center;">
+          <i class="fa-solid fa-face-flushed text-slate" style="font-size:64px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">นาย A (นักลงทุนสายมโน)</h3>
+          <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6;">"ข่าวบอกเศรษฐกิจแย่ ฉันกลัว รีบขายดีกว่า!"<br>"หุ้นตัวนี้เพื่อนบอกกำลังมา ซื้อตามเลย!"</p>
+          <div style="background:#FFFFFF; padding:12px; border-radius:8px; margin-top:20px; font-weight:bold; color:var(--bsd-red); border: 2px solid var(--bsd-red);">
+            ผลลัพธ์: ซื้อแพง ขายถูก ตลอดเวลา
+          </div>
+        </div>
+        
+        <div style="flex:1; background:var(--bg-soft-teal); border-radius:16px; padding:32px; display:flex; flex-direction:column; text-align:center; justify-content:center;">
+          <i class="fa-solid fa-robot text-teal" style="font-size:64px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">นางสาว B (นักลงทุนสาย Quant)</h3>
+          <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6;">"ฉันไม่สนข่าว ฉันเขียนกฎไว้ว่า ถ้าราคาหลุดเส้นค่าเฉลี่ย ให้ขายเป็นเงินสดทันที"</p>
+          <div style="background:#FFFFFF; padding:12px; border-radius:8px; margin-top:20px; font-weight:bold; color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">
+            ผลลัพธ์: รอดตายจากวิกฤตเศรษฐกิจตกหนัก
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Concept SMA -->
+  <div class="slide-container" id="slide4">
+    <div class="watermark wm-3">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">หาเทรนด์ด้วย <span class="text-teal">Moving Average (SMA)</span></h2>
+      <p style="font-size:24px; margin-bottom:24px;">
+        ราคาหุ้นรายวันมันแกว่งไปมา (Noise) ทำให้ดูยากว่ากำลังขึ้นหรือลง<br>การทำ <strong>Simple Moving Average</strong> คือการเอาข้อมูลย้อนหลังมา "หาค่าเฉลี่ย" เพื่อให้เส้นสมูทขึ้น
+      </p>
+      
+      <div style="background:var(--bg-soft-teal); border:4px solid var(--bsd-teal); border-radius:20px; padding:32px; display:flex; flex-direction:column; align-items:center;">
+        
+        <div style="font-size:40px; margin-bottom:24px; background:white; padding:16px 40px; border-radius:12px; border: 2px dashed var(--bsd-teal); font-family: 'Inter', sans-serif;">
+          $$ SMA_3 = \frac{Price_1 + Price_2 + Price_3}{3} $$
+        </div>
+        
+        <div style="display:flex; gap:16px; width:100%; justify-content:center;">
+          <div style="background:white; padding:20px; border-radius:12px; font-size:22px; width: 45%;">
+            <i class="fa-solid fa-arrow-trend-up text-green" style="margin-right:8px;"></i> <strong>เทรนด์ขาขึ้น:</strong><br>ถ้าราคาหุ้น > เส้น SMA (สัญญาณ <b>ซื้อ</b>)
+          </div>
+          <div style="background:white; padding:20px; border-radius:12px; font-size:22px; width: 45%;">
+            <i class="fa-solid fa-arrow-trend-down text-red" style="margin-right:8px;"></i> <strong>เทรนด์ขาลง:</strong><br>ถ้าราคาหุ้น < เส้น SMA (สัญญาณ <b>ขายหนี</b>)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Concept Backtesting -->
+  <div class="slide-container" id="slide5">
+    <div class="watermark wm-4">&amp;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:24px;">การจำลองอดีต <span class="text-orange">(Backtesting)</span></h2>
+      
+      <div style="display:flex; gap:32px; flex-grow:1; align-items:center;">
+        <div style="flex:1;">
+          <p style="font-size:26px; line-height:1.6; margin-bottom:20px;">
+            ก่อนจะเอากฎ (Rule) ที่เราคิด ไปใช้กับเงินจริง เราต้องใช้โปรแกรมคอมพิวเตอร์ <strong class="text-red">"ย้อนเวลา"</strong> เอาข้อมูลในอดีตมาใส่ แล้วดูว่าถ้ายึดตามกฎนี้...
+          </p>
+          <ul style="font-size:24px; line-height:1.8; margin-left:32px; color:var(--bsd-dark);">
+            <li>เราจะได้กำไรเท่าไหร่?</li>
+            <li>เราจะโดนลากติดลบ (Drawdown) กี่เปอร์เซ็นต์?</li>
+            <li>เราชนะการ "ซื้อแล้วถือทิ้งไว้เฉยๆ (Buy & Hold)" ไหม?</li>
+          </ul>
+        </div>
+        
+        <div style="flex:1; background:var(--bsd-dark); border:8px solid var(--bsd-yellow); border-radius:24px; padding:40px; text-align:center; color:white; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+          <i class="fa-solid fa-clock-rotate-left text-yellow" style="font-size:80px; margin-bottom:24px;"></i>
+          <p style="font-size:28px; margin:0; font-weight:600; line-height:1.5;">
+            "ทดสอบกลยุทธ์ในกระดาษ<br>ดีกว่าพลาดในตลาดจริง"
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Code Along -->
+  <div class="slide-container" id="slide6">
+    <div class="watermark wm-1" style="left: auto; right: -50px; top: 50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-teal); color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">CODE ALONG</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">คำสั่ง <code>rolling</code> และ <code>np.where</code></h2>
+      <p style="font-size:24px; margin-bottom:16px;">สร้างไฟล์ <code>lesson6_intro.py</code> เราจะลองใช้ Pandas คำนวณค่าเฉลี่ยย้อนหลัง</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson6_intro.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<span class="c-keyword">import</span> numpy <span class="c-keyword">as</span> np<br>
+<br>
+<span class="c-comment"># จำลองราคาหุ้น 5 วัน</span><br>
+df = pd.DataFrame({<span class="c-string">"Price"</span>: [<span class="c-number">10</span>, <span class="c-number">12</span>, <span class="c-number">15</span>, <span class="c-number">14</span>, <span class="c-number">9</span>]})<br>
+<br>
+<span class="c-comment"># 1. คำนวณ SMA ย้อนหลัง 3 วัน (rolling = เลื่อนหน้าต่าง)</span><br>
+df[<span class="c-string">"SMA_3"</span>] = df[<span class="c-string">"Price"</span>].<span class="c-method">rolling</span>(window=<span class="c-number">3</span>).<span class="c-method">mean()</span><br>
+<br>
+<span class="c-comment"># 2. สร้าง Signal: ถ้าราคา > SMA ให้ถือหุ้น (1) ถ้าไม่ใช่ถือเงินสด (0)</span><br>
+<span class="c-comment"># np.where(เงื่อนไข, ค่าถ้าเป็นจริง, ค่าถ้าเป็นเท็จ)</span><br>
+df[<span class="c-string">"Signal"</span>] = np.<span class="c-method">where</span>(df[<span class="c-string">"Price"</span>] > df[<span class="c-string">"SMA_3"</span>], <span class="c-number">1</span>, <span class="c-number">0</span>)<br>
+<br>
+<span class="c-func">print</span>(df)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Build Step 1 -->
+  <div class="slide-container" id="slide7">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 1/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เตรียมข้อมูลสำหรับ Backtest</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>strategy_dash.py</code> และจำลองข้อมูลตลาด 20 ช่วงเวลา</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">strategy_dash.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<span class="c-keyword">import</span> numpy <span class="c-keyword">as</span> np<br>
+<br>
+st.set_page_config(layout=<span class="c-string">"wide"</span>)<br>
+st.title(<span class="c-string">"🤖 Strategy Backtest Engine"</span>)<br>
+<br>
+<span class="c-comment"># --- 1. จำลองข้อมูลตลาด (มีช่วงขึ้น, ตกหนัก, และฟื้นตัว) ---</span><br>
+mock_prices = [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-number">100</span>, <span class="c-number">105</span>, <span class="c-number">110</span>, <span class="c-number">115</span>, <span class="c-number">120</span>, <span class="c-number">118</span>, <span class="c-number">122</span>, <span class="c-number">125</span>, <span class="c-number">130</span>, <span class="c-number">128</span>, <span class="c-comment"># ตลาดขาขึ้น</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-number">110</span>, <span class="c-number">95</span>, <span class="c-number">85</span>, <span class="c-number">80</span>, <span class="c-number">82</span>, <span class="c-number">85</span>, <span class="c-number">90</span>, <span class="c-number">95</span>, <span class="c-number">100</span>, <span class="c-number">105</span>   <span class="c-comment"># ตลาดถล่ม แล้วฟื้น</span><br>
+]<br>
+df = pd.DataFrame({<span class="c-string">"Time"</span>: <span class="c-func">list</span>(<span class="c-func">range</span>(<span class="c-number">1</span>, <span class="c-number">21</span>)), <span class="c-string">"Price"</span>: mock_prices}).<span class="c-method">set_index</span>(<span class="c-string">"Time"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Build Step 2 -->
+  <div class="slide-container" id="slide8">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 2/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">กำหนดเงื่อนไข (Trading Rule)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อ: สร้าง Slider รับค่าหน้าต่าง SMA และสร้างสัญญาณซื้อขาย (Signal)</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">strategy_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 2. ตั้งค่ากลยุทธ์ Moving Average ---</span><br>
+st.subheader(<span class="c-string">"⚙️ ปรับแต่งกฎการลงทุน"</span>)<br>
+sma_window = st.slider(<span class="c-string">"เลือกช่วงเวลาคำนวณ SMA"</span>, <span class="c-number">2</span>, <span class="c-number">10</span>, <span class="c-number">3</span>)<br>
+<br>
+<span class="c-comment"># คำนวณเส้นค่าเฉลี่ย</span><br>
+df[<span class="c-string">"SMA"</span>] = df[<span class="c-string">"Price"</span>].<span class="c-method">rolling</span>(window=sma_window).<span class="c-method">mean()</span><br>
+<br>
+<span class="c-comment"># สร้างสัญญาณ (Signal): 1 = ถือหุ้น, 0 = ถือเงินสด (หลบภัย)</span><br>
+df[<span class="c-string">"Signal"</span>] = np.<span class="c-method">where</span>(df[<span class="c-string">"Price"</span>] > df[<span class="c-string">"SMA"</span>], <span class="c-number">1</span>, <span class="c-number">0</span>)<br>
+<br>
+<span class="c-comment"># shift(1) สำคัญมาก! ใช้สัญญาณของเมื่อวาน ตัดสินใจวันนี้ ป้องกันการรู้อนาคต</span><br>
+df[<span class="c-string">"Position"</span>] = df[<span class="c-string">"Signal"</span>].<span class="c-method">shift</span>(<span class="c-number">1</span>).<span class="c-method">fillna</span>(<span class="c-number">0</span>) 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Build Step 3 -->
+  <div class="slide-container" id="slide9">
+    <div class="watermark wm-1" style="top: auto; bottom: -50px; left: auto; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 3/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">คำนวณผลตอบแทนเปรียบเทียบ</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อ: เอาผลตอบแทนตลาด ไปคูณกับ Position ที่เราถืออยู่ (1 หรือ 0)</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">strategy_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. คำนวณผลตอบแทน (Return & Growth) ---</span><br>
+<span class="c-comment"># Buy & Hold Benchmark (ซื้อแล้วถือยาว)</span><br>
+df[<span class="c-string">"Market_Return"</span>] = df[<span class="c-string">"Price"</span>].<span class="c-method">pct_change()</span>.<span class="c-method">fillna</span>(<span class="c-number">0</span>)<br>
+df[<span class="c-string">"Buy_Hold_Growth"</span>] = (<span class="c-number">1</span> + df[<span class="c-string">"Market_Return"</span>]).<span class="c-method">cumprod</span>() * <span class="c-number">100</span><br>
+<br>
+<span class="c-comment"># Strategy Return (ผลตอบแทนตามกลยุทธ์ ถ้า Position=0 คือหลบภัย Return=0)</span><br>
+df[<span class="c-string">"Strategy_Return"</span>] = df[<span class="c-string">"Market_Return"</span>] * df[<span class="c-string">"Position"</span>]<br>
+df[<span class="c-string">"Strategy_Growth"</span>] = (<span class="c-number">1</span> + df[<span class="c-string">"Strategy_Return"</span>]).<span class="c-method">cumprod</span>() * <span class="c-number">100</span>
+        </div>
+      </div>
+      
+      <div style="background:#EFF9F8; border-left: 6px solid #00C4BA; padding:12px; border-radius:8px; margin-top:16px;">
+        <p style="font-size: 20px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-code text-teal" style="margin-right:8px;"></i> <b>Syntax Tip:</b> <code>cumprod()</code> คือการคูณทบต้น (Cumulative Product)
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Build Step 4 -->
+  <div class="slide-container" id="slide10">
+    <div class="watermark" style="top: -50px; right: 150px; font-size: 300px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 4/5)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">สร้าง UI แสดงกราฟ</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อ: พลอตกราฟราคา (เพื่อดูจุดตัด) และกราฟความมั่งคั่งเพื่อตัดสินแพ้ชนะ</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">strategy_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 4. แสดงผล Dashboard ---</span><br>
+col1, col2 = st.columns(<span class="c-number">2</span>)<br>
+<span class="c-keyword">with</span> col1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.subheader(<span class="c-string">"📉 สัญญาณซื้อขาย (Price vs SMA)"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.line_chart(df[[<span class="c-string">"Price"</span>, <span class="c-string">"SMA"</span>]])<br>
+<span class="c-keyword">with</span> col2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.subheader(<span class="c-string">"🏆 ใครชนะ? (Growth Comparison)"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.line_chart(df[[<span class="c-string">"Buy_Hold_Growth"</span>, <span class="c-string">"Strategy_Growth"</span>]])<br>
+<br>
+<span class="c-comment"># สรุปผลสุดท้าย</span><br>
+final_diff = df[<span class="c-string">'Strategy_Growth'</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>] - df[<span class="c-string">'Buy_Hold_Growth'</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>]<br>
+st.metric(<span class="c-string">"ความมั่งคั่งของกลยุทธ์ (ฐาน 100)"</span>, <span class="c-string">f"{df['Strategy_Growth'].iloc[-1]:.2f}"</span>, <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delta=<span class="c-string">f"{final_diff:.2f} เทียบกับตลาด"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 11: Build Result -->
+  <div class="slide-container" id="slide11">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลลัพธ์: Strategy Backtest Engine</h2>
+      <p style="font-size:20px; margin-bottom:16px;">เมื่อรันโค้ดเสร็จ นี่คือหน้าตา Web App ของคุณ (ปรับค่าวิเคราะห์หาจุดที่ชนะตลาดได้)</p>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; height: 480px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden;">
+          <div style="background: var(--bg-soft-gray); padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-red);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-yellow);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-green);"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <div style="padding: 24px; font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column;">
+              <h1 style="font-size: 28px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;"><i class="fa-solid fa-robot" style="margin-right:8px; color:var(--bsd-teal);"></i>Strategy Backtest Engine</h1>
+              
+              <div style="display:flex; gap:24px; margin-bottom:24px;">
+                  <div style="flex:1; border:1px solid #E5E7EB; border-radius:8px; padding:16px; background:#F9FAFB;">
+                      <div style="font-size:16px; font-weight:600; margin-bottom:12px; color:#4B5563;"><i class="fa-solid fa-chart-line" style="margin-right:8px;"></i>สัญญาณซื้อขาย (Price vs SMA)</div>
+                      <div style="height:100px; background:linear-gradient(90deg, #E5E7EB 50%, #EFF9F8 50%); border-bottom:2px solid #51545F;"></div>
+                  </div>
+                  <div style="flex:1; border:1px solid #E5E7EB; border-radius:8px; padding:16px; background:#F9FAFB;">
+                      <div style="font-size:16px; font-weight:600; margin-bottom:12px; color:#4B5563;"><i class="fa-solid fa-trophy" style="margin-right:8px; color:var(--bsd-yellow);"></i>ใครชนะ? (Growth Comparison)</div>
+                      <div style="height:100px; background:linear-gradient(90deg, #E5E7EB 50%, #FEFAF1 50%); border-bottom:2px solid #51545F;"></div>
+                  </div>
+              </div>
+
+              <div>
+                  <label style="display:block; font-size: 16px; color: #4B5563; margin-bottom: 4px;">ความมั่งคั่งของกลยุทธ์ (ฐาน 100)</label>
+                  <div style="display:flex; align-items:baseline; gap:16px;">
+                      <div style="font-size: 40px; font-weight: 700; color: var(--bsd-dark); font-family:'Inter', sans-serif;">128.75</div>
+                      <div style="font-size: 18px; font-weight: 600; color: var(--bsd-green); font-family:'Inter', sans-serif;"><i class="fa-solid fa-arrow-up"></i> 23.75 เทียบกับตลาด</div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12: Defend -->
+  <div class="slide-container" id="slide12">
+    <div class="watermark wm-3" style="bottom: 50px; right: -50px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-gray); color:var(--bsd-dark); border: 2px solid var(--bsd-dark);">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">กลยุทธ์นี้รอดจริง หรือแค่ฟลุค?</h2>
+      <p style="font-size:24px; margin-bottom:24px;">เห็นว่ากลยุทธ์เราชนะ เพราะหลบหนีวิกฤตได้ทัน แต่ในโลกจริงมีปัญหาที่ต้องระวัง:</p>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-red); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-red);"><i class="fa-solid fa-money-bill-transfer" style="margin-right:12px;"></i> ต้นทุนแฝง (Transaction Costs)</h3>
+            <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6; margin-bottom:12px;">
+                ทุกครั้งที่ระบบสั่งซื้อๆ ขายๆ คุณต้องเสีย <b>"ค่าธรรมเนียม"</b> ยิ่งปรับ SMA สั้น สัญญาณยิ่งถี่ กำไรอาจหมดไปกับค่าธรรมเนียม
+            </p>
+        </div>
+
+        <div style="flex:1; background:#FFFFFF; border-top: 12px solid var(--bsd-yellow); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+            <h3 style="font-size:32px; margin-bottom:16px; color:var(--bsd-yellow);"><i class="fa-solid fa-chart-line" style="margin-right:12px;"></i> ตลาดแกว่งแคบๆ (Whipsaw)</h3>
+            <p style="font-size:22px; color:var(--bsd-dark); line-height:1.6; margin-bottom:12px;">
+                ถ้าตลาดไม่ได้เป็นเทรนด์ชัดเจน แต่แกว่งแคบๆ (Sideway) สัญญาณจะหลอกให้เรา ซื้อแพง-ขายถูก ซ้ำๆ จนขาดทุนสะสมได้
+            </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13: Exit -->
+  <div class="slide-container" id="slide13">
+    <div class="watermark wm-2" style="top: -50px; left: -50px; right: auto; bottom: auto;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:var(--bg-soft-orange); color:var(--bsd-orange); border: 2px solid var(--bsd-orange); align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:40px; text-align:center;">กฎเหล็กของนักพัฒนา Quant</h2>
+      
+      <div style="background:var(--bsd-dark); color:white; border-radius:20px; padding:32px; margin-bottom:40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); width:100%; max-width:900px; text-align:center;">
+        <h3 style="color:white; font-size:36px; margin-bottom:20px;">
+            <i class="fa-solid fa-triangle-exclamation text-yellow" style="margin-right:12px;"></i> Past Performance != Future Results
+        </h3>
+        <p style="font-size:28px; line-height:1.6; color:#E5E7EB;">
+            "ผลการดำเนินงานในอดีต ไม่ได้การันตีอนาคต"<br><br>
+            โมเดลที่ดูสวยหรูตอนทำ Backtest มักจะพังเมื่อเจอตลาดจริง<br>เพราะเรามักปรับตัวเลขให้เข้าข้างตัวเอง (Overfitting)
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:24px; border: 4px dashed var(--bsd-teal); border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 26px; font-weight: 700; color: var(--bsd-teal); margin:0; line-height:1.5;">
+            "ในบทต่อไป เราจะทำการ 'ทดสอบความเครียด' (Stress Test)<br>เพื่อดูว่าโมเดลที่เราสร้าง แข็งแกร่งพอจะสู้โลกความจริงไหม!"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

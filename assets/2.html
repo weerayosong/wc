@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 2: Build Your Money System</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script>
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+        --bsd-dark: #51545F;
+        --bsd-teal: #00C4BA;
+        --bsd-yellow: #FFCD00;
+        --bsd-red: #FA595D;
+        --bsd-green: #75CF20;
+        --bsd-orange: #FCAC17;
+        --bg-soft-teal: #EFF9F8;
+        --bg-soft-yellow: #FEFAF1;
+        --bg-soft-red: #FFF7F8;
+        --bg-soft-green: #FAFFF8;
+        --bg-soft-orange: #FAF6F0;
+        --bg-soft-gray: #F3F4F6;
+    }
+
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Sarabun', 'Inter', sans-serif; 
+        background: var(--bsd-dark); 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: var(--bsd-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Quicksand', 'Sarabun', sans-serif; 
+        font-weight: 700; 
+        color: var(--bsd-dark); 
+        margin: 0; 
+        line-height: 1.2; 
+    }
+    p { line-height: 1.5; }
+    
+    /* Text Colors */
+    .text-slate { color: var(--bsd-dark); }
+    .text-teal { color: var(--bsd-teal); }
+    .text-yellow { color: var(--bsd-yellow); }
+    .text-red { color: var(--bsd-red); }
+    .text-green { color: var(--bsd-green); }
+    .text-orange { color: var(--bsd-orange); }
+
+    .watermark {
+        position: absolute;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        opacity: 0.05; 
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+    
+    .wm-1 { top: -50px; left: -50px; font-size: 350px; color: var(--bsd-teal); }
+    .wm-2 { bottom: -100px; right: -50px; font-size: 400px; color: var(--bsd-yellow); }
+    .wm-3 { top: -50px; right: 50px; font-size: 300px; color: var(--bsd-red); }
+    .wm-4 { bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-green); }
+    
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 64px; /* ปรับลด Padding เพื่อกันเนื้อหาล้น */
+    }
+
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 12px; /* ปรับลด Margin */
+        align-self: flex-start;
+    }
+
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: var(--bsd-red); }
+    .dot-yellow { background: var(--bsd-yellow); }
+    .dot-green { background: var(--bsd-green); }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 16px 20px; /* ลด Padding ในกล่องโค้ด */
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 18px; /* ใช้ฟอนต์ 18px ในโค้ดเพื่อไม่ให้ล้น */
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; 
+    }
+    
+    /* Code Syntax Highlighting */
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: var(--bsd-red); font-weight: 600; }
+    .c-func { color: var(--bsd-teal); }
+    .c-string { color: var(--bsd-yellow); }
+    .c-number { color: var(--bsd-green); }
+    .c-method { color: var(--bsd-teal); }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Slide 1 -->
+  <div class="slide-container" id="slide1" style="border-top: 16px solid var(--bsd-teal);">
+    <div class="watermark wm-1">&lt;/&gt;</div>
+    <div class="watermark wm-2">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:var(--bg-soft-teal); color:var(--bsd-teal); padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px; font-family:'Quicksand', sans-serif;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 2: Build Your Money System<br><span class="text-teal">ระบบจัดการความมั่งคั่ง</span>
+      </h1>
+      <p style="font-size:32px; color:var(--bsd-dark); max-width:900px; font-weight:700;">
+        "หาเงินได้เยอะแค่ไหน ไม่สำคัญเท่าเหลือเก็บเท่าไหร่"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้การจัดการกระแสเงินสด (Cashflow) การคำนวณความมั่งคั่งสุทธิ (Net Worth) และการใช้เครื่องมือ Pandas
+      </p>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide-container" id="slide2">
+    <div class="watermark wm-3">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-red); border-left: 8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-red); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">รายได้สูง แต่ทำไมไม่มีเงินเก็บ?</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); border-left: 8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-yellow); color:var(--bsd-dark); padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">สมการ Cashflow & Net Worth</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); border-left: 8px solid var(--bsd-teal); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-teal); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">รู้จักกับตารางข้อมูล (Pandas)</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-green); border-left: 8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-green); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Net Worth Dashboard ด้วย Streamlit</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-gray); border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-dark); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">วิเคราะห์ความเสี่ยงและหนี้สิน</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); border-left: 8px solid var(--bsd-orange); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-orange); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">กฎทองคำของการออมเงิน</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide-container" id="slide3">
+    <div class="watermark" style="bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-dark);">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-red); color:var(--bsd-red); border: 2px solid var(--bsd-red);">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">รายได้เยอะ แต่ทำไมเงินไม่เหลือ?</h2>
+      
+      <div style="display:flex; gap:32px; flex-grow:1; align-items:center; margin-top:16px;">
+        <div style="flex:1; background:var(--bg-soft-gray); border-radius:16px; padding:32px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+          <i class="fa-solid fa-user-tie text-slate" style="font-size:80px; margin-bottom:20px;"></i>
+          <h3 style="font-size:32px; margin-bottom:16px;">Ong (อายุ 23 ปี)</h3>
+          <p style="font-size:24px; color:var(--bsd-dark);">โปรแกรมเมอร์จบใหม่ ไฟแรง รายได้ดี</p>
+        </div>
+        
+        <div style="flex:2; display:flex; flex-direction:column; gap:20px;">
+          <div style="background:var(--bg-soft-green); border-left:8px solid var(--bsd-green); padding:24px; border-radius:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="font-size:28px; margin:0;"><i class="fa-solid fa-arrow-trend-up text-green" style="margin-right:12px;"></i>รายรับ (Income)</h4>
+                <span style="font-size:32px; font-weight:bold; color:var(--bsd-green); font-family: 'Inter', sans-serif;">+ 50,000 THB</span>
+            </div>
+          </div>
+          <div style="background:var(--bg-soft-red); border-left:8px solid var(--bsd-red); padding:24px; border-radius:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h4 style="font-size:28px; margin:0;"><i class="fa-solid fa-arrow-trend-down text-red" style="margin-right:12px;"></i>รายจ่าย (Expenses)</h4>
+                <span style="font-size:32px; font-weight:bold; color:var(--bsd-red); font-family: 'Inter', sans-serif;">- 50,000 THB</span>
+            </div>
+            <p style="font-size:20px; color:#6B7280; margin-top:12px; margin-bottom:0;">(ค่าคอนโด, ผ่อนรถ, ปาร์ตี้, ช้อปปิ้ง)</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:var(--bsd-red); color:white; padding:20px; border-radius:12px; text-align:center; margin-top:24px;">
+        <h3 style="color:white; font-size:32px; margin:0;"><i class="fa-solid fa-circle-exclamation" style="margin-right:12px;"></i>คำถาม: สถานะการเงินของ Ong ปลอดภัยหรือไม่ ถ้าเกิดตกงานกะทันหัน?</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide-container" id="slide4">
+    <div class="watermark wm-3">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">กระแสเงินสด <span class="text-teal">(Cashflow)</span></h2>
+      <p style="font-size:24px; margin-bottom:16px;">
+        กระแสเงินสด คือ "เลือด" ที่หล่อเลี้ยงระบบการเงินของคุณ บ่งบอกสภาพคล่องในแต่ละเดือน
+      </p>
+      
+      <div style="background:var(--bg-soft-teal); border:4px solid var(--bsd-teal); border-radius:20px; padding:24px; display:flex; flex-direction:column; align-items:center;">
+        
+        <div style="font-size:44px; margin-bottom:16px; background:white; padding:16px 40px; border-radius:12px; width:100%; text-align:center; border: 2px dashed var(--bsd-teal); font-family: 'Inter', sans-serif;">
+          $$ Cashflow = Income - Expenses $$
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; width:100%;">
+          <div style="background:white; padding:20px; border-radius:12px; display:flex; align-items:center;">
+            <i class="fa-solid fa-circle-plus text-green" style="font-size:36px; margin-right:16px;"></i>
+            <div>
+                <h4 style="font-size:22px; color:var(--bsd-dark);">Positive Cashflow (เงินเหลือ)</h4>
+                <p style="font-size:18px; color:#6B7280; margin:0;">รายรับ > รายจ่าย (มีเงินไปลงทุน)</p>
+            </div>
+          </div>
+          <div style="background:white; padding:20px; border-radius:12px; display:flex; align-items:center;">
+            <i class="fa-solid fa-circle-minus text-red" style="font-size:36px; margin-right:16px;"></i>
+            <div>
+                <h4 style="font-size:22px; color:var(--bsd-dark);">Negative Cashflow (ช็อต)</h4>
+                <p style="font-size:18px; color:#6B7280; margin:0;">รายจ่าย > รายรับ (ต้องกู้หนี้)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-top:16px; background:var(--bg-soft-green); padding:16px 20px; border-radius:12px; border-left:6px solid var(--bsd-green);">
+        <h4 style="font-size:24px; color:var(--bsd-green); margin-bottom:4px;"><i class="fa-solid fa-lightbulb" style="margin-right: 8px;"></i>Savings Rate (อัตราการออม)</h4>
+        <p style="font-size:22px; margin:0;">ควรตั้งเป้าหมายออมเงินให้ได้อย่างน้อย <strong>10% - 20%</strong> ของรายได้เสมอ</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide-container" id="slide5">
+    <div class="watermark wm-4">&amp;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">ความมั่งคั่งสุทธิ <span class="text-orange">(Net Worth)</span></h2>
+      <p style="font-size:24px; margin-bottom:16px;">ตัวชี้วัดที่แท้จริงว่าคุณ "รวย" แค่ไหน ไม่ใช่วัดที่รถหรือของแบรนด์เนม</p>
+      
+      <div style="display:flex; gap:16px; flex-grow:1; align-items:stretch;">
+        <div style="flex:1; background:var(--bg-soft-green); border-top:8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; flex-direction:column;">
+          <h3 style="font-size:28px; margin-bottom:8px; color:var(--bsd-green);"><i class="fa-solid fa-building-columns" style="margin-right: 8px;"></i>Assets</h3>
+          <p style="font-size:20px; color:var(--bsd-dark); margin-bottom:12px;"><strong>ทรัพย์สิน</strong></p>
+          <ul style="font-size:18px; margin-left:24px; color:#6B7280;">
+              <li>เงินสด / เงินฝาก</li>
+              <li>หุ้น / กองทุน / คริปโต</li>
+              <li>อสังหาริมทรัพย์</li>
+          </ul>
+        </div>
+        
+        <div style="display:flex; align-items:center; font-size:48px; color:var(--bsd-dark); font-weight:bold; font-family: 'Inter', sans-serif;">-</div>
+        
+        <div style="flex:1; background:var(--bg-soft-red); border-top:8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; flex-direction:column;">
+          <h3 style="font-size:28px; margin-bottom:8px; color:var(--bsd-red);"><i class="fa-solid fa-credit-card" style="margin-right: 8px;"></i>Liabilities</h3>
+          <p style="font-size:20px; color:var(--bsd-dark); margin-bottom:12px;"><strong>หนี้สิน</strong></p>
+          <ul style="font-size:18px; margin-left:24px; color:#6B7280;">
+              <li>หนี้บัตรเครดิต</li>
+              <li>หนี้ผ่อนรถ / ผ่อนบ้าน</li>
+              <li>หนี้กู้ยืมเรียน</li>
+          </ul>
+        </div>
+        
+        <div style="display:flex; align-items:center; font-size:48px; color:var(--bsd-dark); font-weight:bold; font-family: 'Inter', sans-serif;">=</div>
+        
+        <div style="flex:1.2; background:var(--bg-soft-yellow); border-top:8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; flex-direction:column;">
+          <h3 style="font-size:28px; margin-bottom:8px; color:var(--bsd-orange);"><i class="fa-solid fa-gem" style="margin-right: 8px;"></i>Net Worth</h3>
+          <p style="font-size:20px; color:var(--bsd-dark); margin-bottom:12px;"><strong>ความมั่งคั่งสุทธิ</strong></p>
+          <p style="font-size:18px; color:#6B7280; font-style:italic;">"ถ้าขายของที่มีทั้งหมด แล้วเอาไปใช้หนี้ทั้งหมด คุณจะเหลือเงินเท่าไหร่?"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6 -->
+  <div class="slide-container" id="slide6">
+    <div class="watermark wm-1" style="left: auto; right: -50px; top: 50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-teal); color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">CODE ALONG</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">รู้จักกับ Pandas (ตารางจัดข้อมูล)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">
+        <strong>Pandas</strong> คือ Library สุดฮิตสำหรับจัดการข้อมูล ช่วยอ่านและคำนวณตาราง (เช่น CSV) ได้ง่ายๆ ในบรรทัดเดียว
+      </p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson2_intro.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># 1. นำเข้าเครื่องมือ (ตั้งชื่อย่อว่า pd จะได้พิมพ์ง่ายๆ)</span><br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+<span class="c-comment"># 2. จำลองการสร้างตารางข้อมูลเหมือนใน Excel</span><br>
+data = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Category"</span>: [<span class="c-string">"Salary"</span>, <span class="c-string">"Freelance"</span>, <span class="c-string">"Rent"</span>, <span class="c-string">"Food"</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Type"</span>: [<span class="c-string">"Income"</span>, <span class="c-string">"Income"</span>, <span class="c-string">"Expense"</span>, <span class="c-string">"Expense"</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Amount"</span>: [<span class="c-number">45000</span>, <span class="c-number">15000</span>, <span class="c-number">12000</span>, <span class="c-number">8000</span>]<br>
+}<br>
+<br>
+<span class="c-comment"># แปลงข้อมูลดิบให้อยู่ในรูปแบบ DataFrame (ตารางมหัศจรรย์ของ Pandas)</span><br>
+df = pd.DataFrame(data)<br>
+<span class="c-func">print</span>(df)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7 (Split Part 1) -->
+  <div class="slide-container" id="slide7">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 1/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">เตรียมข้อมูลสำหรับ Dashboard (ส่วนที่ 1)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>dashboard.py</code> นำเข้าไลบรารีและจำลองตาราง <strong>Cashflow</strong></p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+st.set_page_config(layout=<span class="c-string">"wide"</span>) <span class="c-comment"># ตั้งค่าให้เว็บแสดงผลเต็มจอ</span><br>
+st.title(<span class="c-string">"📊 Personal Money System"</span>)<br>
+<br>
+<span class="c-comment"># --- ตารางข้อมูลกระแสเงินสด (Cashflow) ---</span><br>
+cashflow_df = pd.DataFrame({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Category"</span>: [<span class="c-string">"Salary"</span>, <span class="c-string">"Bonus"</span>, <span class="c-string">"Rent"</span>, <span class="c-string">"Food"</span>, <span class="c-string">"Travel"</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Type"</span>: [<span class="c-string">"Income"</span>, <span class="c-string">"Income"</span>, <span class="c-string">"Expense"</span>, <span class="c-string">"Expense"</span>, <span class="c-string">"Expense"</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Amount"</span>: [<span class="c-number">50000</span>, <span class="c-number">10000</span>, <span class="c-number">15000</span>, <span class="c-number">9000</span>, <span class="c-number">4000</span>]<br>
+})
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8 (Split Part 2) -->
+  <div class="slide-container" id="slide8">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 2/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">เตรียมข้อมูลสำหรับ Dashboard (ส่วนที่ 2)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: สร้างจำลองตาราง <strong>Net Worth</strong> เพื่อหลีกเลี่ยงปัญหาไฟล์ CSV หาย</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- ตารางข้อมูลความมั่งคั่งสุทธิ (Net Worth) ---</span><br>
+networth_df = pd.DataFrame({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Item"</span>: [<span class="c-string">"Savings"</span>, <span class="c-string">"Stocks"</span>, <span class="c-string">"Car Loan"</span>, <span class="c-string">"Credit Card"</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Type"</span>: [<span class="c-string">"Asset"</span>, <span class="c-string">"Asset"</span>, <span class="c-string">"Liability"</span>, <span class="c-string">"Liability"</span>],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Amount"</span>: [<span class="c-number">150000</span>, <span class="c-number">50000</span>, <span class="c-number">400000</span>, <span class="c-number">15000</span>]<br>
+})
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9 -->
+  <div class="slide-container" id="slide9">
+    <div class="watermark" style="top: -50px; right: 150px; font-size: 300px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 3/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">คำนวณ Cashflow ด้วย Pandas</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: ใช้พลังของ Pandas ดึงข้อมูลเฉพาะกลุ่มมาบวกรวมกัน (Sum)</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 1. คำนวณ Cashflow ---</span><br>
+<span class="c-comment"># กรองเฉพาะแถวที่เป็น Income แล้วรวมผลลัพธ์ในคอลัมน์ Amount</span><br>
+total_income = cashflow_df[cashflow_df[<span class="c-string">"Type"</span>] == <span class="c-string">"Income"</span>][<span class="c-string">"Amount"</span>].<span class="c-method">sum()</span><br>
+<br>
+<span class="c-comment"># กรองเฉพาะแถวที่เป็น Expense แล้วรวมผลลัพธ์</span><br>
+total_expense = cashflow_df[cashflow_df[<span class="c-string">"Type"</span>] == <span class="c-string">"Expense"</span>][<span class="c-string">"Amount"</span>].<span class="c-method">sum()</span><br>
+<br>
+<span class="c-comment"># คำนวณเงินเหลือ และ อัตราการออม</span><br>
+cashflow = total_income - total_expense<br>
+savings_rate = (cashflow / total_income) * <span class="c-number">100</span>
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-teal); border-left: 6px solid var(--bsd-teal); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 20px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-code text-teal" style="margin-right:8px;"></i> <b>Syntax Explanation:</b> <code>df[ df["Type"] == "Income" ]</code> หมายถึง "คัดกรองตาราง เอาเฉพาะบรรทัดที่คอลัมน์ Type มีค่าเป็นคำว่า Income"
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10 -->
+  <div class="slide-container" id="slide10">
+    <div class="watermark wm-3" style="bottom: -50px; right: 150px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 4/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">คำนวณ Net Worth</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: ใช้วิธีเดียวกันในการแยก Assets และ Liabilities ออกจากตาราง</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 2. คำนวณ Net Worth ---</span><br>
+total_assets = networth_df[networth_df[<span class="c-string">"Type"</span>] == <span class="c-string">"Asset"</span>][<span class="c-string">"Amount"</span>].<span class="c-method">sum()</span><br>
+total_liabs = networth_df[networth_df[<span class="c-string">"Type"</span>] == <span class="c-string">"Liability"</span>][<span class="c-string">"Amount"</span>].<span class="c-method">sum()</span><br>
+<br>
+<span class="c-comment"># คำนวณความมั่งคั่งสุทธิ</span><br>
+net_worth = total_assets - total_liabs
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-yellow); border-left: 6px solid var(--bsd-yellow); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 22px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-lightbulb text-yellow" style="margin-right:8px;"></i> <b>Check Point:</b> ถึงตรงนี้ระบบได้คำนวณตัวเลขสำคัญไว้หมดแล้ว ขั้นตอนต่อไปคือการนำตัวเลขไปแปะลงบนหน้าเว็บ!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 11 (Metrics Split 1) -->
+  <div class="slide-container" id="slide11">
+    <div class="watermark wm-1">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 5/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">แสดงผล Metrics (ส่วนที่ 1)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: แบ่งจอเป็น 3 คอลัมน์ และโชว์ตัวเลข Cashflow/Net Worth</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. สร้าง User Interface (UI) ---</span><br>
+st.header(<span class="c-string">"Executive Summary"</span>)<br>
+<br>
+col1, col2, col3 = st.columns(<span class="c-number">3</span>)<br>
+<br>
+<span class="c-keyword">with</span> col1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"เงินเหลือเก็บ (Cashflow)"</span>, <span class="c-string">f"฿{cashflow:,.2f}"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.write(<span class="c-string">f"อัตราการออม: **{savings_rate:.1f}%**"</span>)<br>
+<br>
+<span class="c-keyword">with</span> col2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"ความมั่งคั่งสุทธิ (Net Worth)"</span>, <span class="c-string">f"฿{net_worth:,.2f}"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 12 (Metrics Split 2) -->
+  <div class="slide-container" id="slide12">
+    <div class="watermark wm-1" style="top:auto; bottom:-50px; left:auto; right:50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 6/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">แสดงผล Metrics (ส่วนที่ 2: สร้างเงื่อนไขแจ้งเตือน)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: ใช้ If/Else เพื่อตรวจสอบว่าสถานะการเงินปลอดภัยหรือไม่</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">with</span> col3:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-comment"># ถ้าความมั่งคั่งสุทธิติดลบ แสดงกล่อง Error สีแดง</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-keyword">if</span> net_worth < <span class="c-number">0</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;st.error(<span class="c-string">"⚠️ คุณมีหนี้สินมากกว่าทรัพย์สิน ระวังอันตราย!"</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-keyword">else</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;st.success(<span class="c-string">"✅ สถานะการเงินของคุณเป็นบวก"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 13 -->
+  <div class="slide-container" id="slide13">
+    <div class="watermark" style="top: -50px; right: -50px; font-size: 350px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 7/7)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">โชว์ตารางข้อมูลดิบ (DataFrames)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดชุดสุดท้าย เพื่อโชว์ตารางที่เราสร้างไว้ ให้ผู้ใช้ตรวจสอบที่มาของตัวเลขได้</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">dashboard.py (cont.)</div>
+        </div>
+        <div class="code-body">
+st.divider() <span class="c-comment"># ขีดเส้นคั่น</span><br>
+st.header(<span class="c-string">"Data Breakdown"</span>)<br>
+<br>
+tab1, tab2 = st.tabs([<span class="c-string">"📈 Cashflow Data"</span>, <span class="c-string">"🏦 Net Worth Data"</span>])<br>
+<br>
+<span class="c-keyword">with</span> tab1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.dataframe(cashflow_df, use_container_width=<span class="c-keyword">True</span>)<br>
+<br>
+<span class="c-keyword">with</span> tab2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.dataframe(networth_df, use_container_width=<span class="c-keyword">True</span>)
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-teal); border-left: 6px solid var(--bsd-teal); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 22px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-play text-teal" style="margin-right:8px;"></i> <b>พร้อมแล้ว:</b> ไปที่ Terminal พิมพ์ <code>streamlit run dashboard.py</code> ได้เลย!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 14: Mockup Result -->
+  <div class="slide-container" id="slide14">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลลัพธ์: Money System Dashboard</h2>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; height: 450px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden; margin-top: 10px;">
+          <!-- Browser Header -->
+          <div style="background: var(--bg-soft-gray); padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-red);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-yellow);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-green);"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <!-- Streamlit App Content -->
+          <div style="padding: 24px; font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; overflow-y:auto;">
+              <h1 style="font-size: 32px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📊 Personal Money System</h1>
+              
+              <h2 style="font-size: 24px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">Executive Summary</h2>
+              
+              <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">เงินเหลือเก็บ (Cashflow)</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); margin-bottom: 8px; font-family: 'Inter', sans-serif;">฿32,000.00</div>
+                      <div style="font-size: 14px; color: #4B5563;">อัตราการออม: <strong style="font-family: 'Inter', sans-serif;">53.3%</strong></div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">ความมั่งคั่งสุทธิ (Net Worth)</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">-฿215,000.00</div>
+                  </div>
+                  <div style="flex: 1; display:flex; align-items:center;">
+                      <div style="background: var(--bg-soft-red); color: var(--bsd-red); padding: 16px; border-radius: 8px; width: 100%; font-weight: 600; border: 1px solid var(--bsd-red); font-size:14px;">
+                          <i class="fa-solid fa-triangle-exclamation" style="margin-right:8px;"></i> คุณมีหนี้สินมากกว่าทรัพย์สิน ระวังอันตราย!
+                      </div>
+                  </div>
+              </div>
+
+              <hr style="border: 0; border-top: 1px solid #E5E7EB; margin-bottom: 24px;">
+
+              <h2 style="font-size: 24px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">Data Breakdown</h2>
+              <div style="display:flex; gap: 16px; margin-bottom: 16px; border-bottom: 1px solid #E5E7EB;">
+                  <div style="padding-bottom: 8px; border-bottom: 2px solid var(--bsd-red); color: var(--bsd-red); font-weight:600; font-size:14px;"><i class="fa-solid fa-chart-line" style="margin-right:8px;"></i>Cashflow Data</div>
+                  <div style="padding-bottom: 8px; color: #6B7280; font-size:14px;"><i class="fa-solid fa-building-columns" style="margin-right:8px;"></i>Net Worth Data</div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 15 -->
+  <div class="slide-container" id="slide15">
+    <div class="watermark wm-3" style="bottom: 50px; right: -50px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-gray); color:var(--bsd-dark); border: 2px solid var(--bsd-dark);">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">วิเคราะห์ความเสี่ยงจากตัวเลข</h2>
+      <p style="font-size:28px; margin-bottom:24px;">ดูจาก Dashboard ของเรา (Net Worth ติดลบ 2 แสนบาท) ตอบคำถามต่อไปนี้:</p>
+      
+      <div style="background:#FFFFFF; border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); flex-grow:1;">
+        <ol style="font-size: 28px; line-height: 1.6; margin-left:32px;">
+            <li style="margin-bottom:24px;">
+                ถ้าเดือนหน้าเราโดน <strong>ไล่ออกจากงานกะทันหัน</strong> รายได้เหลือศูนย์ เงินสดที่มีอยู่ (150k) จะช่วยให้เราอยู่รอดได้กี่เดือน? <span style="color:#6B7280; font-size:24px;">(ใบ้: หารด้วยรายจ่ายต่อเดือน)</span>
+            </li>
+            <li>
+                <strong>เงินสำรองฉุกเฉิน (Emergency Fund)</strong> คืออะไร? และควรมีเท่าไหร่?
+                <ul style="font-size: 24px; color: #6B7280; margin-top:12px; margin-left:32px; list-style-type:square;">
+                    <li style="margin-bottom:8px;">คือเงินสดที่ห้ามเอาไปลงทุนในสินทรัพย์เสี่ยงเด็ดขาด</li>
+                    <li style="margin-bottom:8px;">กฎมาตรฐาน: ควรมีอย่างน้อยเท่ากับ <strong>รายจ่าย 6 เดือน</strong></li>
+                </ul>
+            </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 16 -->
+  <div class="slide-container" id="slide16">
+    <div class="watermark wm-2" style="top: -50px; left: -50px; right: auto; bottom: auto;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:var(--bg-soft-orange); color:var(--bsd-orange); border: 2px solid var(--bsd-orange); align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:32px; text-align:center;">กฎทองคำของการจัดการเงิน</h2>
+      
+      <div style="background:var(--bsd-teal); color:white; border-radius:20px; padding:32px; margin-bottom:32px; box-shadow: 0 10px 25px rgba(0, 196, 186, 0.3); width:100%; max-width:900px; text-align:center;">
+        <h3 style="color:white; font-size:36px; margin-bottom:16px;">
+            <i class="fa-solid fa-piggy-bank text-yellow" style="margin-right:12px;"></i>Pay Yourself First
+        </h3>
+        <p style="font-size:28px; line-height:1.6; font-weight:500;">
+            "จ่ายให้ตัวเองก่อนเสมอ"<br>
+            เมื่อเงินเดือนออก ให้หัก 10-20% ไปเก็บออมหรือลงทุน<strong class="text-yellow">ทันที</strong><br>
+            ก่อนที่จะเอาไปจ่ายค่าใช้จ่ายอื่นๆ
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:20px; border: 4px dashed var(--bsd-red); border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 26px; font-weight: 700; color: var(--bsd-red); margin:0; line-height:1.5;">
+            "ความรวยไม่ได้วัดที่ Income (หาได้เท่าไหร่)<br>แต่วัดที่ Net Worth (เหลือเท่าไหร่และเอาไปลงทุนเท่าไหร่)"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

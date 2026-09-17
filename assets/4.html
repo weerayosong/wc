@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Wealth Code - บทที่ 4: Read Market Data</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script>
+      window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+        --bsd-dark: #51545F;
+        --bsd-teal: #00C4BA;
+        --bsd-yellow: #FFCD00;
+        --bsd-red: #FA595D;
+        --bsd-green: #75CF20;
+        --bsd-orange: #FCAC17;
+        --bg-soft-teal: #EFF9F8;
+        --bg-soft-yellow: #FEFAF1;
+        --bg-soft-red: #FFF7F8;
+        --bg-soft-green: #FAFFF8;
+        --bg-soft-orange: #FAF6F0;
+        --bg-soft-gray: #F3F4F6;
+    }
+
+    body { 
+        margin: 0; 
+        padding: 32px 0; 
+        font-family: 'Sarabun', 'Inter', sans-serif; 
+        background: var(--bsd-dark); 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+    }
+    
+    .slide-container {
+      width: 1280px;
+      height: 720px;
+      overflow: hidden; 
+      background: #FFFFFF;
+      color: var(--bsd-dark);
+      display: flex;
+      flex-direction: column;
+      position: relative; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+    
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Quicksand', 'Sarabun', sans-serif; 
+        font-weight: 700; 
+        color: var(--bsd-dark); 
+        margin: 0; 
+        line-height: 1.2; 
+    }
+    p { line-height: 1.5; }
+    
+    .text-slate { color: var(--bsd-dark); }
+    .text-teal { color: var(--bsd-teal); }
+    .text-yellow { color: var(--bsd-yellow); }
+    .text-red { color: var(--bsd-red); }
+    .text-green { color: var(--bsd-green); }
+    .text-orange { color: var(--bsd-orange); }
+
+    .watermark {
+        position: absolute;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 700;
+        opacity: 0.05; 
+        z-index: 0;
+        pointer-events: none;
+        user-select: none;
+    }
+    
+    .wm-1 { top: -50px; left: -50px; font-size: 350px; color: var(--bsd-teal); }
+    .wm-2 { bottom: -100px; right: -50px; font-size: 400px; color: var(--bsd-yellow); }
+    .wm-3 { top: -50px; right: 50px; font-size: 300px; color: var(--bsd-red); }
+    .wm-4 { bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-green); }
+    
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 64px;
+    }
+
+    .lesson-tag {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Quicksand', sans-serif;
+        margin-bottom: 12px;
+        align-self: flex-start;
+    }
+
+    .code-window {
+        background: #1E293B;
+        border-radius: 12px;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .code-header {
+        background: #0F172A;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: var(--bsd-red); }
+    .dot-yellow { background: var(--bsd-yellow); }
+    .dot-green { background: var(--bsd-green); }
+    .code-title {
+        color: #94A3B8;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        margin-left: 12px;
+        font-weight: 600;
+    }
+    .code-body {
+        padding: 16px 20px;
+        font-family: 'Fira Code', 'Consolas', monospace;
+        font-size: 18px;
+        line-height: 1.5;
+        color: #F8FAFC;
+        overflow-x: auto;
+        overflow-y: hidden; 
+    }
+    
+    .c-comment { color: #64748b; font-style: italic; }
+    .c-keyword { color: var(--bsd-red); font-weight: 600; }
+    .c-func { color: var(--bsd-teal); }
+    .c-string { color: var(--bsd-yellow); }
+    .c-number { color: var(--bsd-green); }
+    .c-method { color: var(--bsd-teal); }
+    
+    .flex-center { display: flex; justify-content: center; align-items: center; }
+    .text-center { text-align: center; }
+
+  </style>
+</head>
+<body>
+
+  <div class="slide-container" id="slide1" style="border-top: 16px solid var(--bsd-teal);">
+    <div class="watermark wm-1">&lt;/&gt;</div>
+    <div class="watermark wm-2">#</div>
+    
+    <div class="content-wrapper flex-center text-center">
+      <div style="background:var(--bg-soft-teal); color:var(--bsd-teal); padding:12px 32px; border-radius:30px; font-weight:700; font-size:20px; margin-bottom:32px; letter-spacing: 2px; font-family:'Quicksand', sans-serif;">
+        WEALTH CODE CURRICULUM
+      </div>
+      <h1 style="font-size:72px; margin-bottom:24px;">
+        บทที่ 4: Read Market Data<br><span class="text-teal">วิเคราะห์ความเสี่ยงและข้อมูลตลาด</span>
+      </h1>
+      <p style="font-size:32px; color:var(--bsd-dark); max-width:900px; font-weight:700;">
+        "กำไรที่น่าหลงใหล มักซ่อนความเสี่ยงที่โหดร้ายเสมอ"
+      </p>
+      <p style="font-size:24px; color:#6B7280; max-width:900px; margin-top:24px;">
+        เรียนรู้การดึงข้อมูลประวัติราคาสินทรัพย์ และคำนวณสถิติความเสี่ยง (Volatility & Drawdown) ด้วย Python
+      </p>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide2">
+    <div class="watermark wm-3">{}</div>
+    
+    <div class="content-wrapper">
+      <h2 style="font-size:48px; margin-bottom:32px; text-align:center;">เส้นทางการเรียนรู้ (120 นาที)</h2>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; flex-grow:1;">
+        
+        <div style="background:var(--bg-soft-red); border-left: 8px solid var(--bsd-red); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-red); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">10m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CASE</h3>
+            <p style="font-size:20px;">รถไฟเหาะของตลาดหุ้น</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-yellow); border-left: 8px solid var(--bsd-yellow); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-yellow); color:var(--bsd-dark); padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">20m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CONCEPT</h3>
+            <p style="font-size:20px;">Return, Volatility & Max Drawdown</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-teal); border-left: 8px solid var(--bsd-teal); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-teal); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">25m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">CODE ALONG</h3>
+            <p style="font-size:20px;">สอน Pandas หาเปอร์เซ็นต์ความเปลี่ยนแปลง</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-green); border-left: 8px solid var(--bsd-green); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-green); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">45m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">BUILD</h3>
+            <p style="font-size:20px;">สร้าง Market Analysis Dashboard</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-gray); border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-dark); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">15m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">DEFEND</h3>
+            <p style="font-size:20px;">ทดสอบจำลองวิกฤต (Stress Test)</p>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); border-left: 8px solid var(--bsd-orange); border-radius:12px; padding:20px; display:flex; align-items:center;">
+          <div style="background:var(--bsd-orange); color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:18px; margin-right:20px; font-family:'Inter', sans-serif;">05m</div>
+          <div>
+            <h3 style="font-size:24px; margin-bottom:4px;">EXIT</h3>
+            <p style="font-size:20px;">คุณทนความผันผวนได้แค่ไหน?</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide3">
+    <div class="watermark" style="bottom: -50px; left: -50px; font-size: 350px; color: var(--bsd-dark);">?</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-red); color:var(--bsd-red); border: 2px solid var(--bsd-red);">CASE STUDY</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">รถไฟเหาะของตลาดหุ้น</h2>
+      
+      <div style="display:flex; gap:24px; flex-grow:1; margin-top:16px;">
+        <div style="flex:1; background:var(--bg-soft-gray); border-radius:16px; padding:32px; display:flex; flex-direction:column;">
+          <div style="font-size:48px; margin-bottom:16px; color:var(--bsd-dark);"><i class="fa-solid fa-user-astronaut"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px;">นาย A นำเงิน 1 ล้าน ไปซื้อหุ้น</h3>
+          <p style="font-size:24px; color:#51545F; line-height:1.6;">
+            เพื่อนบอกว่าหุ้นตัวนี้ได้กำไรเฉลี่ย 15% ต่อปี<br>เขาจึงนำเงินเก็บทั้งหมดมาลงทุน
+          </p>
+        </div>
+        
+        <div style="flex:1; background:var(--bg-soft-red); border-radius:16px; padding:32px; display:flex; flex-direction:column; border: 4px solid var(--bsd-red);">
+          <div style="font-size:48px; margin-bottom:16px; color:var(--bsd-red);"><i class="fa-solid fa-arrow-trend-down"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px;">วิกฤตมาเยือน (เดือนที่ 6)</h3>
+          <p style="font-size:24px; color:#51545F; line-height:1.6;">
+            เศรษฐกิจพัง หุ้นตกหนัก!<br>
+            เงิน 1 ล้าน <strong class="text-red">ลดลงเหลือ 600,000 บาท</strong> (ขาดทุน 40%)
+          </p>
+          <div style="background:#FFFFFF; padding:12px; border-radius:8px; margin-top:auto; font-weight:bold; color:var(--bsd-dark);">
+            <i class="fa-solid fa-face-sad-cry text-red" style="margin-right:8px;"></i> นาย A ทนไม่ไหว กดขายทิ้งเพื่อรักษาเงิน 6 แสนไว้
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:var(--bsd-teal); color:white; padding:20px; border-radius:12px; text-align:center; margin-top:24px;">
+        <h3 style="color:white; font-size:30px; margin:0;"><i class="fa-solid fa-clock-rotate-left" style="margin-right:12px;"></i>ปีต่อมาหุ้นกลับมาฟื้นตัวเป็น 1.2 ล้าน แต่นาย A ขาดทุนไปแล้ว เพราะ "ทนความเสี่ยงไม่ไหว"</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide4">
+    <div class="watermark wm-3">%</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">กำไร <span class="text-slate">VS</span> ความผันผวน</h2>
+      <p style="font-size:24px; margin-bottom:24px;">การลงทุนคือเหรียญสองด้าน เราต้องวัดค่าทั้งสองฝั่งเสมอ</p>
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; flex-grow:1;">
+        <div style="background:var(--bg-soft-green); padding:32px; border-radius:16px; border-left: 8px solid var(--bsd-green);">
+          <div style="font-size:48px; color:var(--bsd-green); margin-bottom:16px;"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px; color:var(--bsd-green)">Return (ผลตอบแทน)</h3>
+          <p style="font-size:22px; color:#51545F;">
+            คือเปอร์เซ็นต์กำไรหรือขาดทุนจากเงินต้น บ่งบอกว่าสินทรัพย์นั้นเติบโตแค่ไหน
+          </p>
+          <div style="margin-top:24px; padding:12px; background:white; border-radius:8px; font-family:'Inter', sans-serif; font-weight:bold;">
+            $ Return = \frac{Price_{new} - Price_{old}}{Price_{old}} $
+          </div>
+        </div>
+
+        <div style="background:var(--bg-soft-orange); padding:32px; border-radius:16px; border-left: 8px solid var(--bsd-orange);">
+          <div style="font-size:48px; color:var(--bsd-orange); margin-bottom:16px;"><i class="fa-solid fa-wave-square"></i></div>
+          <h3 style="font-size:32px; margin-bottom:12px; color:var(--bsd-orange)">Volatility (ความผันผวน)</h3>
+          <p style="font-size:22px; color:#51545F;">
+            คือค่า <strong>ส่วนเบี่ยงเบนมาตรฐาน (Standard Deviation)</strong> วัดว่าราคาสวิงขึ้นลงรุนแรงแค่ไหน ยิ่งแกว่งมาก ยิ่งเสี่ยงมาก
+          </p>
+          <div style="margin-top:24px; padding:12px; background:white; border-radius:8px; font-family:'Inter', sans-serif; font-weight:bold; color:var(--bsd-orange);">
+            <i class="fa-solid fa-triangle-exclamation"></i> ความผันผวนสูง = เสี่ยงสูง
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide5">
+    <div class="watermark wm-4">&amp;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-yellow); color:var(--bsd-yellow); border: 2px solid var(--bsd-yellow);">CONCEPT</div>
+      <h2 style="font-size:48px; margin-bottom:12px;">จุดวัดใจ: <span class="text-red">Maximum Drawdown</span></h2>
+      <p style="font-size:24px; margin-bottom:24px;">ความลับที่นักลงทุนมือใหม่มักไม่รู้ คือจุดที่ขาดทุนหนักที่สุด (พอร์ตแดงที่สุด) ในประวัติศาสตร์</p>
+      
+      <div style="background:var(--bg-soft-red); border:4px solid var(--bsd-red); border-radius:20px; padding:32px; display:flex; flex-direction:column; align-items:center;">
+        
+        <div style="display:flex; width:100%; gap:24px; align-items:center;">
+            <div style="flex:1; font-size:120px; color:var(--bsd-red); text-align:center;">
+                <i class="fa-solid fa-chart-area"></i>
+            </div>
+            <div style="flex:2;">
+                <h3 style="font-size:28px; color:var(--bsd-red); margin-bottom:12px;">MDD (Max Drawdown)</h3>
+                <p style="font-size:24px; color:#51545F; line-height:1.6;">
+                    คือเปอร์เซ็นต์ที่พอร์ตตกลงมาลึกที่สุด นับจาก <strong>จุดสูงสุดเดิม (Peak)</strong> ลงมายัง <strong>จุดต่ำสุด (Trough)</strong> ก่อนที่มันจะฟื้นตัวกลับไป
+                </p>
+                <div style="background:white; padding:16px; border-radius:12px; margin-top:16px; border-left:6px solid var(--bsd-red);">
+                    <p style="font-size:22px; margin:0; font-weight:bold; color:var(--bsd-dark);">
+                        "ถ้ารับ Max Drawdown ของสินทรัพย์นั้นไม่ได้ อย่าซื้อ!"
+                    </p>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide6">
+    <div class="watermark wm-1" style="left: auto; right: -50px; top: 50px;">&lt;/&gt;</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-teal); color:var(--bsd-teal); border: 2px solid var(--bsd-teal);">CODE ALONG</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">คณิตศาสตร์แห่งความเสี่ยงใน Pandas</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>lesson4_intro.py</code> และลองใช้คำสั่งสถิติของ Pandas</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">lesson4_intro.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<span class="c-keyword">import</span> numpy <span class="c-keyword">as</span> np<br>
+<br>
+<span class="c-comment"># จำลองราคาหุ้นรายเดือน ที่มีราคาตกหนักในเดือนที่ 3 (Drawdown)</span><br>
+prices = [<span class="c-number">100</span>, <span class="c-number">120</span>, <span class="c-number">80</span>, <span class="c-number">90</span>, <span class="c-number">130</span>]<br>
+df = pd.DataFrame({<span class="c-string">"Price"</span>: prices})<br>
+<br>
+<span class="c-comment"># 1. pct_change() ใช้หาเปอร์เซ็นต์กำไร/ขาดทุน เทียบกับบรรทัดก่อนหน้า</span><br>
+df[<span class="c-string">"Return"</span>] = df[<span class="c-string">"Price"</span>].<span class="c-method">pct_change()</span><br>
+<br>
+<span class="c-comment"># 2. std() ใช้หาความผันผวน (ส่วนเบี่ยงเบนมาตรฐาน)</span><br>
+volatility = df[<span class="c-string">"Return"</span>].<span class="c-method">std()</span><br>
+<br>
+<span class="c-func">print</span>(df)<br>
+<span class="c-func">print</span>(<span class="c-string">f"\nความผันผวน: {volatility:.4f}"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide7">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 1/6)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เตรียมข้อมูลตลาดสำหรับ Dashboard</h2>
+      <p style="font-size:22px; margin-bottom:12px;">สร้างไฟล์ <code>market_dash.py</code> ในโลกจริงเราจะใช้ `pd.read_csv()` แต่ตอนนี้เราจะจำลองตาราง (Mock Data) ไปก่อนเพื่อความรวดเร็ว</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">market_dash.py</div>
+        </div>
+        <div class="code-body">
+<span class="c-keyword">import</span> streamlit <span class="c-keyword">as</span> st<br>
+<span class="c-keyword">import</span> pandas <span class="c-keyword">as</span> pd<br>
+<br>
+st.set_page_config(layout=<span class="c-string">"wide"</span>)<br>
+st.title(<span class="c-string">"📊 Market Analysis Dashboard"</span>)<br>
+<br>
+<span class="c-comment"># --- 1. จำลองข้อมูลราคาสินทรัพย์ (รายเดือน 12 เดือน) ---</span><br>
+<span class="c-comment"># สังเกตว่าในเดือนที่ 6 ราคาจะตกลงอย่างหนัก (จำลองวิกฤต)</span><br>
+data = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Month"</span>: <span class="c-func">list</span>(<span class="c-func">range</span>(<span class="c-number">1</span>, <span class="c-number">13</span>)),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-string">"Asset_Price"</span>: [<span class="c-number">100</span>, <span class="c-number">105</span>, <span class="c-number">110</span>, <span class="c-number">115</span>, <span class="c-number">120</span>, <span class="c-number">80</span>, <span class="c-number">70</span>, <span class="c-number">75</span>, <span class="c-number">85</span>, <span class="c-number">95</span>, <span class="c-number">110</span>, <span class="c-number">125</span>]<br>
+}<br>
+df = pd.DataFrame(data).<span class="c-method">set_index</span>(<span class="c-string">"Month"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide8">
+    <div class="watermark wm-4" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 2/6)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">คำนวณ Return และ Volatility</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: ใช้พลังของ Pandas คำนวณความเสี่ยงของสินทรัพย์นี้</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">market_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 2. คำนวณความเสี่ยงและผลตอบแทน ---</span><br>
+<br>
+<span class="c-comment"># หาผลตอบแทนรวม 1 ปี (ราคาเดือน 12 ลบ ราคาเดือน 1) หาร ราคาเดือน 1</span><br>
+total_return = (df[<span class="c-string">"Asset_Price"</span>].<span class="c-method">iloc</span>[-<span class="c-number">1</span>] - df[<span class="c-string">"Asset_Price"</span>].<span class="c-method">iloc</span>[<span class="c-number">0</span>]) / df[<span class="c-string">"Asset_Price"</span>].<span class="c-method">iloc</span>[<span class="c-number">0</span>]<br>
+<br>
+<span class="c-comment"># สร้างคอลัมน์ใหม่ เก็บเปอร์เซ็นต์เปลี่ยนแปลงแบบรายเดือน</span><br>
+df[<span class="c-string">"Monthly_Return"</span>] = df[<span class="c-string">"Asset_Price"</span>].<span class="c-method">pct_change()</span><br>
+<br>
+<span class="c-comment"># หาความผันผวน (ความสวิงของราคา)</span><br>
+volatility = df[<span class="c-string">"Monthly_Return"</span>].<span class="c-method">std()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide9">
+    <div class="watermark wm-1" style="top: auto; bottom: -50px; left: auto; right: 50px;">{}</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 3/6)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">เจาะลึกอัลกอริทึม Max Drawdown</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: วิธีหาจุดขาดทุนที่ลึกที่สุด ต้องหา "จุดสูงสุดสะสม" ก่อน แล้วดูว่าราคาปัจจุบันตกลงมาจากจุดนั้นเท่าไหร่</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">market_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># 1. หาราคาสูงสุดที่เคยทำได้ ตั้งแต่วันแรกจนถึงปัจจุบัน (cummax = Cumulative Max)</span><br>
+df[<span class="c-string">"Peak"</span>] = df[<span class="c-string">"Asset_Price"</span>].<span class="c-method">cummax()</span><br>
+<br>
+<span class="c-comment"># 2. หาเปอร์เซ็นต์ที่ตกลงมาจาก Peak ในแต่ละเดือน</span><br>
+df[<span class="c-string">"Drawdown"</span>] = (df[<span class="c-string">"Asset_Price"</span>] - df[<span class="c-string">"Peak"</span>]) / df[<span class="c-string">"Peak"</span>]<br>
+<br>
+<span class="c-comment"># 3. ดึงค่าที่ติดลบหนักที่สุดออกมา (min)</span><br>
+max_drawdown = df[<span class="c-string">"Drawdown"</span>].<span class="c-method">min()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide10">
+    <div class="watermark" style="top: -50px; right: 150px; font-size: 300px; color: var(--bsd-dark); opacity: 0.05;">[]</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 4/6)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">แสดงผลความเสี่ยง (Metrics)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์ต่อด้านล่าง: แบ่งจอเป็น 3 คอลัมน์ และเปลี่ยนค่าทศนิยมเป็นเปอร์เซ็นต์ (*100)</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">market_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+<span class="c-comment"># --- 3. สร้าง UI แสดงผล ---</span><br>
+st.subheader(<span class="c-string">"Key Risk Metrics"</span>)<br>
+<br>
+c1, c2, c3 = st.columns(<span class="c-number">3</span>)<br>
+<br>
+<span class="c-keyword">with</span> c1:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"📈 1-Year Return"</span>, <span class="c-string">f"{total_return * 100:.2f}%"</span>)<br>
+<span class="c-keyword">with</span> c2:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"🌪️ Volatility (ความผันผวน)"</span>, <span class="c-string">f"{volatility * 100:.2f}%"</span>)<br>
+<span class="c-keyword">with</span> c3:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.metric(<span class="c-string">"📉 Max Drawdown (จุดขาดทุนสูงสุด)"</span>, <span class="c-string">f"{max_drawdown * 100:.2f}%"</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide11">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Step 5/6)</div>
+      <h2 style="font-size:44px; margin-bottom:12px;">วาดกราฟราคา (Area Chart)</h2>
+      <p style="font-size:22px; margin-bottom:12px;">พิมพ์โค้ดชุดสุดท้าย: นำคอลัมน์ราคามาวาดกราฟพื้นที่ เพื่อให้เห็นภาพการตกท้องช้าง (Drawdown) ชัดๆ</p>
+      
+      <div class="code-window">
+        <div class="code-header">
+            <div class="code-dot dot-red"></div><div class="code-dot dot-yellow"></div><div class="code-dot dot-green"></div>
+            <div class="code-title">market_dash.py (cont.)</div>
+        </div>
+        <div class="code-body">
+st.divider()<br>
+<br>
+st.subheader(<span class="c-string">"📈 Price Action & Drawdown"</span>)<br>
+<span class="c-comment"># ใช้ area_chart จะระบายสีใต้เส้นกราฟให้ด้วย ดูสวยงามขึ้น</span><br>
+st.area_chart(df[<span class="c-string">"Asset_Price"</span>])<br>
+<br>
+<span class="c-comment"># โชว์ตารางข้อมูลดิบ เพื่อความโปร่งใส (Data Dictionary)</span><br>
+<span class="c-keyword">with</span> st.expander(<span class="c-string">"🔍 ดูตารางข้อมูลดิบ (Raw Data)"</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;st.dataframe(df, use_container_width=<span class="c-keyword">True</span>)
+        </div>
+      </div>
+      
+      <div style="background:var(--bg-soft-teal); border-left: 6px solid var(--bsd-teal); padding:16px; border-radius:8px; margin-top:20px;">
+        <p style="font-size: 22px; margin:0; color:var(--bsd-dark);">
+            <i class="fa-solid fa-play text-teal" style="margin-right:8px;"></i> <b>พร้อมแล้ว:</b> ไปที่ Terminal พิมพ์ <code>streamlit run market_dash.py</code> ได้เลย!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide12">
+    <div class="watermark wm-1" style="left: auto; right: -50px;">*</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-green); color:var(--bsd-green); border: 2px solid var(--bsd-green);">BUILD PROJECT (Result)</div>
+      <h2 style="font-size:44px; margin-bottom:8px;">ผลลัพธ์: Market Analysis Dashboard</h2>
+      
+      <!-- Mock Browser Window -->
+      <div style="width: 100%; height: 480px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid #E5E7EB; display: flex; flex-direction: column; overflow: hidden; margin-top: 10px;">
+          <!-- Browser Header -->
+          <div style="background: var(--bg-soft-gray); padding: 12px 16px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-red);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-yellow);"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--bsd-green);"></div>
+              <div style="margin-left: 16px; background: #FFFFFF; padding: 4px 16px; border-radius: 6px; font-size: 14px; color: #6B7280; flex-grow: 1; text-align: center; font-family: 'Inter', sans-serif;">localhost:8501</div>
+          </div>
+          <!-- Streamlit App Content -->
+          <div style="padding: 24px; font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; overflow-y:hidden;">
+              <h1 style="font-size: 28px; margin-bottom: 16px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📊 Market Analysis Dashboard</h1>
+              
+              <h2 style="font-size: 20px; margin-bottom: 12px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">Key Risk Metrics</h2>
+              
+              <div style="display: flex; gap: 24px; margin-bottom: 16px;">
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">📈 1-Year Return</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">25.00%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">🌪️ Volatility (ความผันผวน)</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-dark); font-family: 'Inter', sans-serif;">19.45%</div>
+                  </div>
+                  <div style="flex: 1; background: #F9FAFB; padding: 16px; border-radius: 8px; border: 1px solid #E5E7EB;">
+                      <div style="font-size: 14px; color: #4B5563; margin-bottom: 4px;">📉 Max Drawdown</div>
+                      <div style="font-size: 28px; font-weight: 700; color: var(--bsd-red); font-family: 'Inter', sans-serif;">-41.67%</div>
+                  </div>
+              </div>
+
+              <hr style="border: 0; border-top: 1px solid #E5E7EB; margin-bottom: 16px;">
+
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <h2 style="font-size: 20px; color:var(--bsd-dark); font-family: 'Quicksand', sans-serif;">📈 Price Action & Drawdown</h2>
+                  <div style="font-size: 12px; color: #9CA3AF;"><i class="fa-solid fa-chart-area" style="font-size:32px;"></i></div>
+              </div>
+              <div style="height:100px; background:linear-gradient(180deg, rgba(250,89,93,0.2) 0%, rgba(255,255,255,0) 100%); border-top: 2px solid var(--bsd-red); border-radius: 4px; margin-top:8px;"></div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide13">
+    <div class="watermark wm-3" style="bottom: 50px; right: -50px; top: auto;">@</div>
+    
+    <div class="content-wrapper">
+      <div class="lesson-tag" style="background:var(--bg-soft-gray); color:var(--bsd-dark); border: 2px solid var(--bsd-dark);">DEFEND</div>
+      <h2 style="font-size:48px; margin-bottom:16px;">วิเคราะห์พฤติกรรมสินทรัพย์</h2>
+      <p style="font-size:24px; margin-bottom:24px;">ดูจาก Dashboard ของเรา ตอบคำถามต่อไปนี้:</p>
+      
+      <div style="background:#FFFFFF; border-left: 8px solid var(--bsd-dark); border-radius:12px; padding:32px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); flex-grow:1;">
+        <ol style="font-size: 26px; line-height: 1.6; margin-left:32px;">
+            <li style="margin-bottom:24px;">
+                สินทรัพย์ตัวนี้ให้กำไร 1 ปีตั้ง <strong>25%</strong> ถือว่าน่าสนใจมากใช่ไหม?
+            </li>
+            <li style="margin-bottom:24px;">
+                แต่มี <strong>Max Drawdown ที่ -41.67%</strong> แปลว่าถ้านักเรียนเอาเงินเก็บทั้งชีวิต 1 ล้านบาทไปซื้อ ในระหว่างปี เงินของนักเรียนจะหดลงเหลือเท่าไหร่?
+                <p style="font-size: 22px; color: #6B7280; margin-top:8px; margin-left:16px;">
+                    <i class="fa-solid fa-arrow-right text-red"></i> คำตอบ: หดเหลือ 583,300 บาท!
+                </p>
+            </li>
+            <li>
+                <strong>คำถามสำคัญ:</strong> นักเรียนคิดว่าตัวเองจะ "ทน" เห็นเงินหายไป 4 แสนกว่าบาทโดยไม่ตกใจขายทิ้ง (เหมือนนาย A) ได้หรือไม่?
+            </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-container" id="slide14">
+    <div class="watermark wm-2" style="top: -50px; left: -50px; right: auto; bottom: auto;">%</div>
+    
+    <div class="content-wrapper" style="justify-content:center; align-items:center;">
+      <div class="lesson-tag" style="background:var(--bg-soft-orange); color:var(--bsd-orange); border: 2px solid var(--bsd-orange); align-self:center;">EXIT</div>
+      <h2 style="font-size:56px; margin-bottom:32px; text-align:center;">Risk and Reward</h2>
+      
+      <div style="background:var(--bsd-dark); color:white; border-radius:20px; padding:40px; margin-bottom:32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); width:100%; max-width:900px; text-align:center;">
+        <h3 style="color:white; font-size:40px; margin-bottom:20px;">
+            "High Risk, High Return"
+        </h3>
+        <p style="font-size:26px; line-height:1.6; font-weight:500; color:#E5E7EB;">
+            กำไรที่สูง ย่อมแลกมาด้วยจุดขาดทุนสูงสุด (Max Drawdown) ที่ลึกเสมอ<br>
+            ถ้าเราเลือกสินทรัพย์ที่ผันผวนน้อย (เช่น พันธบัตร)<br>เราจะนอนหลับสบาย แต่เป้าหมายอาจจะถึงช้า
+        </p>
+      </div>
+
+      <div style="text-align:center; padding:20px; border: 4px dashed var(--bsd-teal); border-radius:16px; width:100%; max-width:900px;">
+        <p style="font-size: 26px; font-weight: 700; color: var(--bsd-teal); margin:0; line-height:1.5;">
+            "ในบทต่อไป เราจะเรียนรู้วิธีเอาสินทรัพย์เสี่ยงสูง มาผสมกับสินทรัพย์เสี่ยงต่ำ<br>เรียกว่าการจัดพอร์ต (Portfolio Allocation) เพื่อรักษาสมดุล!"
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
